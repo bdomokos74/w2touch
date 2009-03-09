@@ -3,5 +3,26 @@
  "http://java.sun.com/dtd/web-app_2_3.dtd" >
 
 <web-app>
-  <display-name>Archetype Created Web Application</display-name>
+  <display-name>Webapp for exposing chat resources</display-name>
+  
+   <context-param>  
+       <param-name>org.restlet.application</param-name>  
+       <param-value>  
+          org.bds.touch.rest.ChatApplication  
+       </param-value>  
+    </context-param>  
+   
+    <!-- Restlet adapter -->  
+    <servlet>  
+       <servlet-name>RestletServlet</servlet-name>  
+       <servlet-class>  
+          com.noelios.restlet.ext.servlet.ServerServlet
+       </servlet-class>  
+    </servlet>  
+   
+    <!-- Catch all requests -->  
+    <servlet-mapping>  
+       <servlet-name>RestletServlet</servlet-name>  
+       <url-pattern>/resources/*</url-pattern>  
+    </servlet-mapping>  
 </web-app>
