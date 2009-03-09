@@ -1,0 +1,32 @@
+DROP TABLE POST IF EXISTS;
+DROP TABLE CHAT IF EXISTS;
+DROP TABLE USER IF EXISTS;
+
+CREATE TABLE USER (
+	id INTEGER IDENTITY,
+	name VARCHAR(20),
+	pw VARCHAR(20)
+);
+
+
+CREATE TABLE CHAT (
+	id INTEGER IDENTITY,
+	chat_name VARCHAR(20),
+	owner_id INTEGER,
+	owner_name VARCHAR(255),
+	party_name VARCHAR(255)
+);
+ALTER TABLE CHAT ADD CONSTRAINT user_fk FOREIGN KEY( owner_id )
+REFERENCES USER ( id );
+
+
+CREATE TABLE POST (
+	id INTEGER IDENTITY,
+	chat_id INTEGER,
+	direction TINYINT,
+	post_text VARCHAR(1000)
+);
+ALTER TABLE POST ADD CONSTRAINT chat_fk FOREIGN KEY( chat_id )
+REFERENCES CHAT( id ); 
+
+insert into USER  (name, pw) values ('admin', 'admin');
