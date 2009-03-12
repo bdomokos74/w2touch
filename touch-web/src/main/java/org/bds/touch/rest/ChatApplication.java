@@ -27,7 +27,7 @@ public class ChatApplication extends Application {
 
 		// Defines only one route
 		router.attach("/users", UserListResource.class);
-		router.attach("/users/{userName}", UserResource.class);
+		router.attach("/users/{userId}", UserResource.class);
 
 		return router;
 	}
