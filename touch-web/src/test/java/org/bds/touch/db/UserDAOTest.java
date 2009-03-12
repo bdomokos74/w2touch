@@ -76,5 +76,6 @@ public class UserDAOTest {
 		assertNotNull(user);
 		assertNotNull(user2);
 		assertEquals(2, user2.getId());
+		assertEquals("balint2", userDao.findUserById(2).getName());
 	}
 }

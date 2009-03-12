@@ -4,8 +4,8 @@ DROP TABLE USER IF EXISTS;
 
 CREATE TABLE USER (
 	id INTEGER IDENTITY,
-	name VARCHAR(20),
-	pw VARCHAR(20)
+	name VARCHAR(20) not null,
+	pw VARCHAR(20) not null
 );
 
 

@@ -69,7 +69,7 @@ public class JdbcUserDAO extends JdbcDaoSupport implements UserDAO {
 		});
 		if(updated<=0)
 			throw new RuntimeException("insert failed (USER)");
-		
+		getJdbcTemplate().update("commit");
 		int idValue = (Integer)getJdbcTemplate().query("call identity()", new ResultSetExtractor() {
 			public Object extractData(ResultSet rs) throws SQLException,
 					DataAccessException {
@@ -79,7 +79,15 @@ public class JdbcUserDAO extends JdbcDaoSupport implements UserDAO {
 					throw new RuntimeException("call identity() failed (USER)");
 			}
 		});
+		
 		return new User(idValue, name, password);
+	}
+
+	public void deleteUserById(int id) {
+		int updated = getJdbcTemplate().update("delete from user where id="+id);
+		if(updated <=0)
+			throw new RuntimeException("can't delete user, id="+id);
+		
 	}
 
 	

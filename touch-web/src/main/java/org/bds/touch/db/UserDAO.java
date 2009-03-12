@@ -14,4 +14,6 @@ public interface UserDAO {
 
 	User createUser(final String name, final String password);
 
+	void deleteUserById(int id);
+
 }
