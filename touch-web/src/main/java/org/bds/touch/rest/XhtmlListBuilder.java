@@ -6,7 +6,6 @@ import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.restlet.resource.DomRepresentation;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public class XhtmlListBuilder<T> extends XhtmlBuilder {
@@ -22,7 +21,6 @@ public class XhtmlListBuilder<T> extends XhtmlBuilder {
 			IOException {
 
 		DomRepresentation repr = createXhtmlDocument();
-		doc = repr.getDocument();
 		Element docElement = doc.getDocumentElement();
 		Element body = buildHeadAndBody(docElement, invoker.getTitle());
 
