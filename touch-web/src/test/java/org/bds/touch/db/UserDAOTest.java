@@ -1,13 +1,11 @@
 package org.bds.touch.db;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.List;
 
-import org.apache.commons.dbcp.BasicDataSource;
 import org.bds.touch.model.User;
 import org.junit.After;
 import org.junit.Before;
@@ -28,22 +26,12 @@ public class UserDAOTest {
 
 	@After
 	public void resetDB() throws SQLException {
-		Connection conn = null;
-		Statement statement = null;
-		BasicDataSource dataSource = null;
-		try {
-			dataSource = (BasicDataSource)appContext.getBean("dataSource");
-			conn = dataSource.getConnection();
-			statement = conn.createStatement();
-			statement.executeUpdate("delete from USER where name != 'admin'");
-			// reset the autoincremented index
-			statement.executeUpdate("alter table USER alter column id restart with 1");
-		}finally {
-			statement.close();
-			conn.close();
-			dataSource.close();
+		List<User> users = userDao.findUsers();
+		for (User user : users) {
+			if(!user.getName().equals("admin"))
+				userDao.deleteUserById(user.getId());
 		}
-		
+		((JdbcUserDAO)userDao).getSimpleJdbcTemplate().update("alter table USER alter column id restart with 1");
 	}
 
 	@Test

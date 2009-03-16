@@ -7,7 +7,13 @@
     <bean id="userDAO" class="org.bds.touch.db.JdbcUserDAO">
         <property name="dataSource" ref="dataSource"/>
     </bean>
-
+	<bean id="chatDAO" class="org.bds.touch.db.JdbcChatDAO">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    <bean id="postDAO" class="org.bds.touch.db.JdbcPostDAO">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    
     <!-- the DataSource (parameterized for configuration via a PropertyPlaceHolderConfigurer) -->
     <bean id="dataSource" destroy-method="close" class="org.apache.commons.dbcp.BasicDataSource">
         <property name="driverClassName" value="org.hsqldb.jdbcDriver"/>

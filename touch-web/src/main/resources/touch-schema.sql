@@ -11,6 +11,7 @@ CREATE TABLE USER (
 
 CREATE TABLE CHAT (
 	id INTEGER IDENTITY,
+	last_modified TIMESTAMP default CURRENT_TIMESTAMP,
 	chat_name VARCHAR(20),
 	owner_id INTEGER,
 	owner_name VARCHAR(255),
@@ -22,6 +23,7 @@ REFERENCES USER ( id );
 
 CREATE TABLE POST (
 	id INTEGER IDENTITY,
+	created TIMESTAMP default CURRENT_TIMESTAMP,
 	chat_id INTEGER,
 	direction TINYINT,
 	post_text VARCHAR(1000)

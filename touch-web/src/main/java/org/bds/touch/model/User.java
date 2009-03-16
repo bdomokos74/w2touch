@@ -1,9 +1,9 @@
 package org.bds.touch.model;
 
 public class User {
-	private final String name;
-	private final String pw;
-	private final int id;
+	private String name;
+	private String pw;
+	private int id;
 
 	public User(int id, String name, String pw) {
 		this.id = id;
@@ -11,20 +11,28 @@ public class User {
 		this.pw = pw;
 	}
 
+	public int getId() {
+		return id;
+	}
+
 	public String getName() {
 		return name;
 	}
 
+	public void setName(String name) {
+		this.name = name;
+	}
+	
 	public String getPw() {
 		return pw;
 	}
 	
-	public int getId() {
-		return id;
+	public void setPw(String pw) {
+		this.pw = pw;
 	}
 	
 	@Override
 	public String toString() {
-		return "User["+id+","+name+","+pw+"]";
+		return "User["+id+","+name+"]";
 	}
 }
