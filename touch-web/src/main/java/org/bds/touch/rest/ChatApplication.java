@@ -1,5 +1,7 @@
 package org.bds.touch.rest;
 
+import org.bds.touch.db.ChatDAO;
+import org.bds.touch.db.PostDAO;
 import org.bds.touch.db.UserDAO;
 import org.restlet.Application;
 import org.restlet.Restlet;
@@ -9,11 +11,15 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class ChatApplication extends Application {
 	private UserDAO userDao;
+	private ChatDAO chatDao;
+	private PostDAO postDao;
 
 	public ChatApplication() {
 		ApplicationContext appContext = new ClassPathXmlApplicationContext(
 				"/appcontext.xml");
 		userDao = (UserDAO) appContext.getBean("userDAO");
+		chatDao = (ChatDAO) appContext.getBean("chatDAO");
+		postDao = (PostDAO) appContext.getBean("postDAO");
 	}
 
 	/**
@@ -28,11 +34,22 @@ public class ChatApplication extends Application {
 		// Defines only one route
 		router.attach("/users", UserListResource.class);
 		router.attach("/users/{userId}", UserResource.class);
+		router.attach("/users/{userId}/chats", ChatListResource.class);
+		router.attach("/users/{userId}/chats/{chatId}", ChatResource.class);
+		router.attach("/users/{userId}/chats/{chatId}/{postId}", PostResource.class);
 
 		return router;
 	}
 	
 	public UserDAO getUserDao() {
 		return userDao;
+	}
+
+	public ChatDAO getChatDao() {
+		return chatDao;
+	}
+	
+	public PostDAO getPostDao() {
+		return postDao;
 	}
 }

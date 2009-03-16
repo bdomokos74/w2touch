@@ -22,91 +22,19 @@ import org.restlet.resource.Variant;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-public class UserListResource extends Resource implements XhtmlInvoker<User> {
-
+public class UserListResource extends Resource implements XhtmlCallback<User> {
+	
 	public UserListResource(Context context, Request request, Response response) {
 		super(context, request, response);
 		setModifiable(true);
 		getVariants().add(new Variant(MediaType.TEXT_XML));
 	}
 
-	@Override
-	public Representation represent(Variant variant) throws ResourceException {
-		DomRepresentation repr = null;
-
-		XhtmlListBuilder<User> builder = new XhtmlListBuilder<User>(this);
-		if (MediaType.TEXT_XML.equals(variant.getMediaType())) {
-			try {
-				repr = builder.buildXhtml();
-			} catch (ParserConfigurationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		return repr;
-	}
-
-	@Override
-	public void acceptRepresentation(Representation entity)
-			throws ResourceException {
-		Form form = new Form(entity);
-		System.out.println("form="+form);
-		String name = form.getFirstValue("name");
-		String pw = form.getFirstValue("pw");
-
-		if (name == null) {
-			generateErrorRepresentation("User " + name + " already exists.",
-					"1", getResponse());
-		}
-
-		User user = ((ChatApplication) getApplication()).getUserDao()
-				.createUser(name, pw);
-
-		getResponse().setStatus(Status.SUCCESS_CREATED);
-		Representation rep = new StringRepresentation("Item created "+user.getId(),
-				MediaType.TEXT_PLAIN);
-		rep.setIdentifier(getRequest().getResourceRef().getIdentifier() + "/"
-				+ user.getId());
-		getResponse().setEntity(rep);
-
-	}
-
-	private void generateErrorRepresentation(String errorMessage,
-			String errorCode, Response response) {
-		// This is an error
-		response.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
-		// Generate the output representation
-		try {
-			DomRepresentation representation = new DomRepresentation(
-					MediaType.TEXT_XML);
-			// Generate a DOM document representing the list of
-			// items.
-			Document d = representation.getDocument();
-
-			Element eltError = d.createElement("error");
-
-			Element eltCode = d.createElement("code");
-			eltCode.appendChild(d.createTextNode(errorCode));
-			eltError.appendChild(eltCode);
-
-			Element eltMessage = d.createElement("message");
-			eltMessage.appendChild(d.createTextNode(errorMessage));
-			eltError.appendChild(eltMessage);
-
-			response.setEntity(representation);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
 	public String getTitle() {
 		return "User list";
 	}
 
-	public String getLink(User u) {
+	public String getUserLink(User u) {
 		Reference baseRef = getRequest().getResourceRef().getBaseRef();
 		return baseRef + "/" + u.getId();
 	}
@@ -116,9 +44,64 @@ public class UserListResource extends Resource implements XhtmlInvoker<User> {
 				.getUserDao().findUsers();
 		return persistedUsers;
 	}
-
-	public String getText(User u) {
-		return u.getName();
+	
+	public Element buildHeaderPart(XhtmlBuilder builder) {
+		return null;
 	}
 
+	public Element buildItemPart(XhtmlBuilder builder, User u) {
+		Element liElement = builder.getDoc().createElement("li");
+		Element aElement = builder.addNewElement(liElement, "a");
+		aElement.setAttribute("href", getUserLink(u));
+		aElement.setTextContent(u.getName());
+		return liElement;
+	}
+	
+	public String getResourceClass() {
+		return "users";
+	}
+	
+	@Override
+	public Representation represent(Variant variant) throws ResourceException {
+		DomRepresentation repr = null;
+
+		XhtmlListBuilder<User> builder = new XhtmlListBuilder<User>(this);
+		if (MediaType.TEXT_XML.equals(variant.getMediaType())) {
+			try {
+				repr = builder.buildXhtml();
+			} catch (ParserConfigurationException e) {
+				throw new ResourceException(Status.SERVER_ERROR_INTERNAL, e.getMessage());
+			} catch (IOException e) {
+				throw new ResourceException(Status.SERVER_ERROR_INTERNAL, e.getMessage());
+			}
+		}
+		return repr;
+	}
+
+	@Override
+	public void acceptRepresentation(Representation entity)
+			throws ResourceException {
+		Form form = new Form(entity);
+		String name = form.getFirstValue("name");
+		String pw = form.getFirstValue("pw");
+
+		if (name == null) {
+			XhtmlBuilder builder = new XhtmlBuilder();
+			getResponse().setEntity(builder.buildErrorRepr(1, "Missing parameters"));
+			return;
+		}
+
+		User user = ((ChatApplication) getApplication()).getUserDao()
+				.createUser(name, pw);
+
+		getResponse().setStatus(Status.SUCCESS_CREATED);
+		Representation rep = new StringRepresentation("Item created "+user.getId()+"\n",
+				MediaType.TEXT_PLAIN);
+		rep.setIdentifier(getRequest().getResourceRef().getIdentifier() + "/"
+				+ user.getId());
+		getResponse().setEntity(rep);
+
+	}
+
+	
 }

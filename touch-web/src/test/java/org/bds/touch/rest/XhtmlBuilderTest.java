@@ -7,7 +7,7 @@ import org.junit.Test;
 import org.restlet.resource.DomRepresentation;
 
 public class XhtmlBuilderTest {
-	TestHelper testHelper = TestHelper.getInstance();
+	TransformHelper testHelper = TransformHelper.getInstance();
 
 	@BeforeClass
 	public static void setup() {

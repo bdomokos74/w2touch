@@ -10,11 +10,11 @@ import org.w3c.dom.Element;
 
 public class XhtmlListBuilder<T> extends XhtmlBuilder {
 
-	private final XhtmlInvoker<T> invoker;
+	private final XhtmlCallback<T> callback;
 
-	public XhtmlListBuilder(XhtmlInvoker<T> invoker) {
+	public XhtmlListBuilder(XhtmlCallback<T> callback) {
 		super();
-		this.invoker = invoker;
+		this.callback = callback;
 	}
 
 	public DomRepresentation buildXhtml() throws ParserConfigurationException,
@@ -22,18 +22,18 @@ public class XhtmlListBuilder<T> extends XhtmlBuilder {
 
 		DomRepresentation repr = createXhtmlDocument();
 		Element docElement = doc.getDocumentElement();
-		Element body = buildHeadAndBody(docElement, invoker.getTitle());
+		Element body = buildHeadAndBody(docElement, callback.getTitle());
 
+		Element headerElement = callback.buildHeaderPart(this);
+		if(headerElement!=null)
+			body.appendChild(headerElement);
+			
 		Element ulElement = addNewElement(body, "ul");
-		ulElement.setAttribute("class", "users");
+		ulElement.setAttribute("class", callback.getResourceClass());
 
-		List<T> list = invoker.getList();
+		List<T> list = callback.getList();
 		for (T element : list) {
-			Element liElement = addNewElement(ulElement, "li");
-			Element aElement = addNewElement(liElement, "a");
-			aElement.setAttribute("href", invoker.getLink(element));
-			aElement.setTextContent(invoker.getText(element));
-			System.out.println(element.toString());
+			ulElement.appendChild(callback.buildItemPart(this, element));
 		}
 		return repr;
 	}
