@@ -11,6 +11,10 @@ import org.springframework.jdbc.core.simple.SimpleJdbcDaoSupport;
 
 public class JdbcPostDAO extends SimpleJdbcDaoSupport implements PostDAO {
 
+	private static final String SELECT_POST_BY_ID = "select id, chat_id, direction, post_text from post where id = ?";
+	private static final String SELECT_POST_BY_NAME_AND_OWNERID = "select post.id, chat_id, direction, post_text from post, chat where chat_name = ? and owner_id = ? and chat_id = chat.id";
+	private static final String SELECT_POSTS = "select id, chat_id, direction, post_text from post order by created";
+	private static final String SELECT_POSTS_BY_CHATID = "select id, chat_id, direction, post_text from post where chat_id = ?";
 	private static final String UPDATE_LAST_MODIFIED = "update chat set last_modified = CURRENT_TIMESTAMP where id = ?";
 	
 	private static ParameterizedRowMapper<Post> mapper = new ParameterizedRowMapper<Post>() {
@@ -43,17 +47,20 @@ public class JdbcPostDAO extends SimpleJdbcDaoSupport implements PostDAO {
 	}
 
 	public Post findPostById(int id) {
-		return getSimpleJdbcTemplate().queryForObject("select id, chat_id, direction, post_text from post where id = ?", mapper, id);
+		return getSimpleJdbcTemplate().queryForObject(SELECT_POST_BY_ID, mapper, id);
 	}
 	
 	public List<Post> findAllPosts() {
 		return getSimpleJdbcTemplate().query(
-				"select id, chat_id, direction, post_text from post order by created", mapper);
+				SELECT_POSTS, mapper);
 	}
 
 	public List<Post> findAllPostsByChatId(int chatId) {
-		return getSimpleJdbcTemplate().query(
-				"select id, chat_id, direction, post_text from post where chat_id = ?", mapper, chatId);
+		return getSimpleJdbcTemplate().query(SELECT_POSTS_BY_CHATID, mapper, chatId);
+	}
+
+	public List<Post> findAllPostsByOwnerIdAndChatName(int ownerId,	String chatName) {
+		return getSimpleJdbcTemplate().query(SELECT_POST_BY_NAME_AND_OWNERID, mapper, chatName, ownerId);
 	}
 
 }

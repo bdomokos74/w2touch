@@ -11,5 +11,6 @@ public interface PostDAO {
 	Post findPostById(int id);
 	List<Post> findAllPostsByChatId(int chatId);
 	void delete(int id);
+	List<Post> findAllPostsByOwnerIdAndChatName(int ownerId, String chatName);
 
 }

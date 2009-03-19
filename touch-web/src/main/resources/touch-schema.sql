@@ -17,9 +17,8 @@ CREATE TABLE CHAT (
 	owner_name VARCHAR(255),
 	party_name VARCHAR(255)
 );
-ALTER TABLE CHAT ADD CONSTRAINT user_fk FOREIGN KEY( owner_id )
-REFERENCES USER ( id );
-
+ALTER TABLE CHAT ADD CONSTRAINT user_fk FOREIGN KEY( owner_id ) REFERENCES USER ( id );
+ALTER TABLE CHAT ADD CONSTRAINT chat_uniqe UNIQUE (chat_name, owner_id);
 
 CREATE TABLE POST (
 	id INTEGER IDENTITY,
@@ -28,7 +27,6 @@ CREATE TABLE POST (
 	direction TINYINT,
 	post_text VARCHAR(1000)
 );
-ALTER TABLE POST ADD CONSTRAINT chat_fk FOREIGN KEY( chat_id )
-REFERENCES CHAT( id ); 
+ALTER TABLE POST ADD CONSTRAINT chat_fk FOREIGN KEY( chat_id ) REFERENCES CHAT( id ); 
 
 insert into USER  (name, pw) values ('admin', 'admin');

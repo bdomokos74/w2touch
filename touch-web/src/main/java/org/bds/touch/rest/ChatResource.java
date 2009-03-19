@@ -26,7 +26,7 @@ import org.restlet.resource.StringRepresentation;
 import org.restlet.resource.Variant;
 import org.w3c.dom.Element;
 
-public class ChatResource extends Resource implements XhtmlCallback<Post>{
+public class ChatResource extends Resource implements XhtmlCallback<Chat,Post>{
 	private static DateFormat fmt = new SimpleDateFormat("yyyyMMddHHmmss.SSS"); 
 	public ChatResource(Context context, Request request, Response response) {
 		super(context, request, response);
@@ -34,17 +34,9 @@ public class ChatResource extends Resource implements XhtmlCallback<Post>{
 		getVariants().add(new Variant(MediaType.TEXT_XML));
 	}
 
-	public Element buildHeaderPart(XhtmlBuilder builder) {
-		String userId = (String) getRequest().getAttributes().get("chatId");
-		int id = -1;
-		try {
-			id = Integer.parseInt(userId);
-		} catch (NumberFormatException e) {
-			e.printStackTrace();
-		}
-		Chat chat = ((ChatApplication) getApplication()).getChatDao().findChatById(id);
-		
-		Element dlElem = builder.getDoc().createElement("dl");
+	public Element buildHeaderPart(XhtmlBuilder<Chat,Post> builder, Chat chat) {
+		System.out.println("ownerid="+getOwnerId()+" chatname="+getChatName());
+		Element dlElem = builder.createElement("dl");
 		builder.addPair(dlElem, "chatName", chat.getChatName());
 		builder.addPair(dlElem, "otherName", chat.getOtherName());
 		Date lastModified = chat.getLastModified();
@@ -52,25 +44,23 @@ public class ChatResource extends Resource implements XhtmlCallback<Post>{
 		return dlElem;
 	}
 
-	public Element buildItemPart(XhtmlBuilder builder, Post t) {
-		Element liElement = builder.getDoc().createElement("li");
+	public Element buildItemPart(XhtmlBuilder<Chat,Post> builder, Post post) {
+		Element liElement = builder.createElement("li");
 		Element aElement = builder.addNewElement(liElement, "a");
-		aElement.setAttribute("href", getPostLink(t));
-		aElement.setTextContent(t.getText());
+		aElement.setAttribute("href", getPostLink(post));
+		aElement.setTextContent(post.getText());
 		return liElement;
 	}
-	
-	public String getTitle() {
-		return "Chat";
+
+	private String getChatName() {
+		return getAttribute("chatName");
+	}
+	private int getOwnerId() {
+		return Integer.parseInt(getAttribute("userId"));
 	}
 
-	public List<Post> getList() {
-		List<Post> posts = ((ChatApplication) getApplication()).getPostDao().findAllPostsByChatId(getChatId());
-		return posts;
-	}
-
-	private int getChatId() {
-		return Integer.parseInt((String)getRequest().getAttributes().get("chatId"));
+	private String getAttribute(String attrName) {
+		return (String)getRequest().getAttributes().get(attrName);
 	}
 	
 	public String getResourceClass() {
@@ -85,12 +75,20 @@ public class ChatResource extends Resource implements XhtmlCallback<Post>{
 	
 
 	/**
-	 * Returns a full representation for a given variant.
+	 * Handle GET. Returns a full representation for a given variant.
 	 */
 	@Override
 	public Representation represent(Variant variant) throws ResourceException {
 		DomRepresentation repr = null;
-		XhtmlListBuilder<Post> builder = new XhtmlListBuilder<Post>(this);
+		Chat chat = getChatApplication().getChatDao().findChatByName(getOwnerId(), getChatName());
+		if(chat == null) {
+			throw new ResourceException(404);
+		}
+		
+		XhtmlBuilder<Chat, Post> builder = new XhtmlBuilder<Chat,Post>(this);
+		builder.setHeader(chat);
+		List<Post> posts = (getChatApplication()).getPostDao().findAllPostsByOwnerIdAndChatName(getOwnerId(), getChatName());
+		builder.setChildren(posts);
 		if (MediaType.TEXT_XML.equals(variant.getMediaType())) {
 			try {
 				repr = builder.buildXhtml();
@@ -106,6 +104,9 @@ public class ChatResource extends Resource implements XhtmlCallback<Post>{
 		return repr;
 	}
 
+	/**
+	 * Handle POST requests, adds a chat post entry to this chat
+	 */
 	@Override
 	public void acceptRepresentation(Representation entity)
 			throws ResourceException {
@@ -114,7 +115,7 @@ public class ChatResource extends Resource implements XhtmlCallback<Post>{
 		String dir = form.getFirstValue("direction");
 
 		if (text == null || dir == null) {
-			XhtmlBuilder builder = new XhtmlBuilder();
+			XhtmlBuilder<Chat,Post> builder = new XhtmlBuilder<Chat,Post>(this);
 			getResponse().setEntity(builder.buildErrorRepr(1, "Missing parameters"));
 			return;
 		}
@@ -122,12 +123,13 @@ public class ChatResource extends Resource implements XhtmlCallback<Post>{
 		try {
 			idir = Integer.parseInt(dir);
 		} catch (NumberFormatException e) {
-			XhtmlBuilder builder = new XhtmlBuilder();
+			XhtmlBuilder<Chat,Post> builder = new XhtmlBuilder<Chat,Post>(this);
 			getResponse().setEntity(builder.buildErrorRepr(1, "Invalid parameters"));
 		}
 		
-		Post post = ((ChatApplication) getApplication()).getPostDao()
-				.createPost(getChatId(), Post.Direction.getDirection(idir), text);
+		Chat chat = getChatApplication().getChatDao().findChatByName(getOwnerId(), getChatName());
+		Post post = getChatApplication().getPostDao()
+				.createPost(chat.getId(), Post.Direction.getDirection(idir), text);
 
 		getResponse().setStatus(Status.SUCCESS_CREATED);
 		Representation rep = new StringRepresentation("Item created "+post.getId()+"\n",
@@ -137,14 +139,28 @@ public class ChatResource extends Resource implements XhtmlCallback<Post>{
 		getResponse().setEntity(rep);
 
 	}
+
+	/**
+	 * PUT request, to create a new chat. Fails if the chat with that chat name already exists.
+	 */
+	@Override
+	public void storeRepresentation(Representation entity)
+			throws ResourceException {
+		// TODO Auto-generated method stub
+		super.storeRepresentation(entity);
+	}
+	
+	
+	private ChatApplication getChatApplication() {
+		return (ChatApplication) getApplication();
+	}
 	
 	@Override
 	public void delete() {
-		String chatId = (String) getRequest().getAttributes().get("chatId");
-		
-		ChatDAO chatDao = ((ChatApplication) getApplication()).getChatDao();
-		chatDao.delete(Integer.parseInt(chatId));
-		
+		ChatDAO chatDao = getChatApplication().getChatDao();
+		Chat chat = chatDao.findChatByName(getOwnerId(), getChatName());
+		chatDao.delete(chat.getId());
+		// TODO delete the posts as well, this will cause integrity violation
 	}
 
 }

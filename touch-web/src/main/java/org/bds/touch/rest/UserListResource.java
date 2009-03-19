@@ -19,10 +19,9 @@ import org.restlet.resource.Resource;
 import org.restlet.resource.ResourceException;
 import org.restlet.resource.StringRepresentation;
 import org.restlet.resource.Variant;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-public class UserListResource extends Resource implements XhtmlCallback<User> {
+public class UserListResource extends Resource implements XhtmlCallback<User,Chat> {
 	
 	public UserListResource(Context context, Request request, Response response) {
 		super(context, request, response);
@@ -45,15 +44,13 @@ public class UserListResource extends Resource implements XhtmlCallback<User> {
 		return persistedUsers;
 	}
 	
-	public Element buildHeaderPart(XhtmlBuilder builder) {
-		return null;
-	}
+	
 
-	public Element buildItemPart(XhtmlBuilder builder, User u) {
+	public Element buildItemPart(XhtmlBuilder<User,Chat> builder, Chat c) {
 		Element liElement = builder.getDoc().createElement("li");
 		Element aElement = builder.addNewElement(liElement, "a");
-		aElement.setAttribute("href", getUserLink(u));
-		aElement.setTextContent(u.getName());
+		aElement.setAttribute("href", getUserLink(c));
+		aElement.setTextContent(c.getName());
 		return liElement;
 	}
 	
@@ -65,7 +62,7 @@ public class UserListResource extends Resource implements XhtmlCallback<User> {
 	public Representation represent(Variant variant) throws ResourceException {
 		DomRepresentation repr = null;
 
-		XhtmlListBuilder<User> builder = new XhtmlListBuilder<User>(this);
+		XhtmlBuilder<User,Chat> builder = new XhtmlBuilder<User,Chat>(this);
 		if (MediaType.TEXT_XML.equals(variant.getMediaType())) {
 			try {
 				repr = builder.buildXhtml();

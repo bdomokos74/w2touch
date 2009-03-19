@@ -12,6 +12,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcDaoSupport;
 public class JdbcChatDAO extends SimpleJdbcDaoSupport implements ChatDAO {
 
 	private static final String SELECT_ALL_CHAT = "select id, last_modified, chat_name, owner_id, party_name from chat";
+	private static final String SELECT_CHAT_BY_NAME = "select id, last_modified, chat_name, owner_id, party_name from chat where owner_id = ? and chat_name = ?";
 	private static final String SELECT_CHAT_BY_ID = "select id, last_modified, chat_name, owner_id, party_name from chat where id = ?";
 	private static final String SELECT_CHAT_BY_USERID = "select id, last_modified, chat_name, owner_id, party_name from chat where owner_id = ?";
 	private static final String DELETE_CHAT_BY_ID = "delete from chat where id = ?";
@@ -60,4 +61,11 @@ public class JdbcChatDAO extends SimpleJdbcDaoSupport implements ChatDAO {
 		return chat;
 	}
 
+	public Chat findChatByName(int id, String name) {
+		List<Chat> chats = getSimpleJdbcTemplate().query(SELECT_CHAT_BY_NAME, mapper, id, name);
+		if(chats==null||chats.size()==0)
+			return null;
+		else
+			return chats.get(0);
+	}
 }

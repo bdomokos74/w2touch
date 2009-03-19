@@ -14,33 +14,32 @@ import org.restlet.resource.Representation;
 import org.restlet.resource.Resource;
 import org.restlet.resource.ResourceException;
 import org.restlet.resource.Variant;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-public class PostResource extends Resource {
+public class PostResource extends Resource implements
+		XhtmlCallback<Post, Object> {
 	public PostResource(Context context, Request request, Response response) {
 		super(context, request, response);
 		getVariants().add(new Variant(MediaType.TEXT_XML));
 	}
-	
+
 	@Override
 	public Representation represent(Variant variant) throws ResourceException {
 		DomRepresentation repr = null;
-		XhtmlBuilder builder = new XhtmlBuilder();
+		String postId = (String) getRequest().getAttributes().get("postId");
+
+		Post post = ((ChatApplication) getApplication()).getPostDao()
+				.findPostById(Integer.parseInt(postId));
+
+		XhtmlBuilder<Post, Object> builder = new XhtmlBuilder<Post, Object>(
+				this);
 		builder.setTitle("Post details");
+		builder.setHeader(post);
 		if (MediaType.TEXT_XML.equals(variant.getMediaType())) {
-			try {				
-				String postId = (String)getRequest().getAttributes().get("postId");
-				Post post = ((ChatApplication)getApplication()).getPostDao().findPostById(Integer.parseInt(postId));
-				
+			try {
+
 				repr = builder.buildXhtml();
-				Document document = repr.getDocument();
-				Element body = (Element)document.getElementsByTagName("body").item(0);
-				Element dlElem = builder.addNewElement(body, "dl");
 				
-				builder.addPair(dlElem, "chat", String.valueOf(post.getChatId()));
-				builder.addPair(dlElem, "text", String.valueOf(post.getText()));
-				builder.addPair(dlElem, "dir", String.valueOf(post.getDirection()));
 			} catch (ParserConfigurationException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
@@ -48,4 +47,19 @@ public class PostResource extends Resource {
 			}
 		}
 		return repr;
-	}}
+	}
+
+	public Element buildHeaderPart(XhtmlBuilder<Post, Object> builder,
+			Post post) {
+		Element dlElem = builder.createElement("dl");
+		builder.addPair(dlElem, "chat", String.valueOf(post.getChatId()));
+		builder.addPair(dlElem, "text", String.valueOf(post.getText()));
+		builder.addPair(dlElem, "dir", String.valueOf(post.getDirection()));
+		return null;
+	}
+
+	public Element buildItemPart(XhtmlBuilder<Post, Object> builder, Object item) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+}

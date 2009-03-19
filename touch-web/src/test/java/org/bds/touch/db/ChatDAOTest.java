@@ -1,7 +1,9 @@
 package org.bds.touch.db;
 
 import static junit.framework.Assert.assertEquals;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -15,6 +17,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.dao.DataIntegrityViolationException;
 
 public class ChatDAOTest {
 	private static ChatDAO chatDao;
@@ -81,11 +84,28 @@ public class ChatDAOTest {
 		assertEquals("chatname2", chatList.get(0).getChatName());
 	}
 	@Test
+	public void testFindChatByName_1() throws Exception {
+		Chat chat = chatDao.createChat("chatname1", user.getId(), otherName );
+		Chat chat2 = chatDao.createChat("chatname2", user2.getId(), otherName );
+		Chat readFromDb = chatDao.findChatByName(user2.getId(), "chatname2");
+		assertNotNull(readFromDb);
+		assertEquals("chatname2", readFromDb.getChatName());
+	}
+	@Test
 	public void testDeleteChat() throws Exception {
 		Chat chat = chatDao.createChat("chatname", user.getId(), otherName );
 		chatDao.delete(chat.getId());
 	}
 	
-
+	@Test
+	public void testCreateChat_owner_chatname_constraint() throws Exception {
+		Chat chat1 = chatDao.createChat("chatname", user.getId(), otherName );
+		
+		try {
+			Chat chat2 = chatDao.createChat("chatname", user.getId(), "othername2" );
+			fail("Exception expected, unique constraint is violated");
+		} catch (DataIntegrityViolationException e) {
+		}
+	}
 	
 }

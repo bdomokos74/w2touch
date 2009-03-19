@@ -87,4 +87,12 @@ public class PostDAOTest {
 		assertEquals("hello there", postList.get(0).getText());
 	}
 	
+	@Test 
+	public void testFindPostsForOwnerAndChat() throws Exception {		
+		postDao.createPost( chat.getId(), Post.Direction.OUT, "hello there");
+		postDao.createPost( otherchat.getId(), Post.Direction.IN, "hello there again");
+		List<Post> postList = postDao.findAllPostsByOwnerIdAndChatName(user.getId(), "mychat");
+		assertEquals(1, postList.size());
+		assertEquals("hello there", postList.get(0).getText());
+	}
 }

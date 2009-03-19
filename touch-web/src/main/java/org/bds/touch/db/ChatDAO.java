@@ -6,10 +6,11 @@ import org.bds.touch.model.Chat;
 
 public interface ChatDAO {
 
-	Chat createChat(String string, int ownerId, String otherName);
+	Chat createChat(String chatName, int ownerId, String otherName);
 	void delete(int id);
 	List<Chat> findAllChat();
 	List<Chat> findAllChatByUserId(int id);
 	Chat findChatById(int id);
+	Chat findChatByName(int ownerId, String chatName);
 
 }
