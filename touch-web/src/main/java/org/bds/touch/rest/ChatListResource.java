@@ -15,43 +15,28 @@ import org.restlet.data.Response;
 import org.restlet.data.Status;
 import org.restlet.resource.DomRepresentation;
 import org.restlet.resource.Representation;
-import org.restlet.resource.Resource;
 import org.restlet.resource.ResourceException;
 import org.restlet.resource.StringRepresentation;
 import org.restlet.resource.Variant;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-public class ChatListResource extends Resource implements XhtmlCallback<Object, Chat> {
+public class ChatListResource extends AbstractResource implements XhtmlCallback<Object, Chat> {
 
 	public ChatListResource(Context context, Request request, Response response) {
 		super(context, request, response);
 		setModifiable(true);
 		getVariants().add(new Variant(MediaType.TEXT_XML));
 	}
-
-
-	public String getTitle() {
-		return "Chat List";
-	}
 	
 	private int getUserId() {
 		return Integer.parseInt((String)getRequest().getAttributes().get("userId"));
 	}
 
-	public String getText(Chat chat) {
-		return chat.getChatName();
-	}
 	public String getLink(Chat chat) {
 		Reference baseRef = getBaseUrl();
 		return baseRef + "/" + chat.getChatName();
 	}
 
-	private Reference getBaseUrl() {
-		return getRequest().getResourceRef().getBaseRef();
-	}
-
-	
 	public List<Chat> getChatList() {
 		int userId = getUserId();
 		List<Chat> persistedChats = ((ChatApplication) getApplication()).getChatDao().findAllChatByUserId(userId);
@@ -72,15 +57,10 @@ public class ChatListResource extends Resource implements XhtmlCallback<Object, 
 		Element liElement = builder.createElement("li");
 		Element aElement = builder.addNewElement(liElement, "a");
 		aElement.setAttribute("href", getLink(c));
-		aElement.setTextContent(getText(c));
+		aElement.setTextContent(c.getChatName());
 		return liElement;
 	}
 	
-	private String trimLastPart(String baseRef) {
-		int lastSlash = baseRef.lastIndexOf('/');
-		return baseRef.substring(0, lastSlash);
-	}
-
 	public String getResourceClass() {
 		return "chats";
 	}
@@ -138,11 +118,4 @@ public class ChatListResource extends Resource implements XhtmlCallback<Object, 
 		getResponse().setEntity(rep);
 
 	}
-
-
-	
-
-
-	
-
 }

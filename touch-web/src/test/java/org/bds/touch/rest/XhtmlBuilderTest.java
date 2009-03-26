@@ -20,12 +20,12 @@ public class XhtmlBuilderTest {
 			return null;
 		}
 	};
-	XhtmlCallback<Object,Object> cb_test = new XhtmlCallback<Object,Object>() {
-		public Element buildHeaderPart(XhtmlBuilder<Object,Object> builder, Object header) {
+	XhtmlCallback<Object,Integer> cb_test = new XhtmlCallback<Object,Integer>() {
+		public Element buildHeaderPart(XhtmlBuilder<Object,Integer> builder, Object header) {
 			return builder.createElement("HeadTag");
 		}
-		public Element buildItemPart(XhtmlBuilder<Object,Object> builder, Object item) {
-			return builder.createElement("ChildTag");
+		public Element buildItemPart(XhtmlBuilder<Object,Integer> builder, Integer item) {
+			return builder.createElement("ChildTag"+item);
 		}
 	};
 	
@@ -44,10 +44,10 @@ public class XhtmlBuilderTest {
 	}
 	@Test
 	public void testXhtmlBuilder_mainrep() throws Exception {
-		XhtmlBuilder<Object,Object> builder = new XhtmlBuilder<Object,Object>(cb_test);
+		XhtmlBuilder<Object,Integer> builder = new XhtmlBuilder<Object,Integer>(cb_test);
 		builder.setTitle("test title");
 		builder.setHeader(new Object());
-		builder.setChildren(Arrays.asList(new Object(), new Object()));
+		builder.setChildren(Arrays.asList(new Integer(1), new Integer(2)));
 		DomRepresentation repr = builder.buildXhtml();		
 		String result = testHelper.indentXml(repr.getDocument());
 		assertEquals(

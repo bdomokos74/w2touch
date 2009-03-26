@@ -6,8 +6,8 @@
   <body>
     <HeadTag/>
     <ul>
-      <ChildTag/>
-      <ChildTag/>
+      <ChildTag1/>
+      <ChildTag2/>
     </ul>
   </body>
 </html>

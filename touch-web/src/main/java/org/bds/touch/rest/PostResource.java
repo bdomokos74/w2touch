@@ -55,7 +55,7 @@ public class PostResource extends Resource implements
 		builder.addPair(dlElem, "chat", String.valueOf(post.getChatId()));
 		builder.addPair(dlElem, "text", String.valueOf(post.getText()));
 		builder.addPair(dlElem, "dir", String.valueOf(post.getDirection()));
-		return null;
+		return dlElem;
 	}
 
 	public Element buildItemPart(XhtmlBuilder<Post, Object> builder, Object item) {

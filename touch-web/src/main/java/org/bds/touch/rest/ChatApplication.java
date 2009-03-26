@@ -2,24 +2,15 @@ package org.bds.touch.rest;
 
 import org.bds.touch.db.ChatDAO;
 import org.bds.touch.db.PostDAO;
+import org.bds.touch.db.ServiceLocator;
 import org.bds.touch.db.UserDAO;
 import org.restlet.Application;
 import org.restlet.Restlet;
 import org.restlet.Router;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class ChatApplication extends Application {
-	private UserDAO userDao;
-	private ChatDAO chatDao;
-	private PostDAO postDao;
 
 	public ChatApplication() {
-		ApplicationContext appContext = new ClassPathXmlApplicationContext(
-				"/appcontext.xml");
-		userDao = (UserDAO) appContext.getBean("userDAO");
-		chatDao = (ChatDAO) appContext.getBean("chatDAO");
-		postDao = (PostDAO) appContext.getBean("postDAO");
 	}
 
 	/**
@@ -44,14 +35,14 @@ public class ChatApplication extends Application {
 	}
 	
 	public UserDAO getUserDao() {
-		return userDao;
+		return ServiceLocator.getUserDao();
 	}
 
 	public ChatDAO getChatDao() {
-		return chatDao;
+		return ServiceLocator.getChatDao();
 	}
 	
 	public PostDAO getPostDao() {
-		return postDao;
+		return ServiceLocator.getPostDao();
 	}
 }

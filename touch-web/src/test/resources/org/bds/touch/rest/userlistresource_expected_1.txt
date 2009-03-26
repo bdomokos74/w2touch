@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title/>
+  </head>
+  <body>
+    <ul>
+      <p class="user">
+        <a href="http://www.test.org/users/1">testname_1</a>
+      </p>
+      <p class="user">
+        <a href="http://www.test.org/users/2">testname_2</a>
+      </p>
+    </ul>
+  </body>
+</html>

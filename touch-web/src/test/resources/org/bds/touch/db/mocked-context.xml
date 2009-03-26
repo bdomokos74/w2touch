@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+       http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<bean id="userDAO" class="org.bds.touch.mock.MockUserDAO">
+		<property name="users">
+			<map>
+				<entry key="1" value-ref="user1" />
+				<entry key="2" value-ref="user2" />
+			</map>
+		</property>
+	</bean>
+
+	<bean id="chatDAO" class="org.bds.touch.mock.MockChatDAO">
+	</bean>
+	<bean id="postDAO" class="org.bds.touch.mock.MockPostDAO">
+	</bean>
+
+	<!-- users -->
+	<bean id="user1" class="org.bds.touch.model.User">
+		<constructor-arg value="1" />
+		<constructor-arg value="testname_1" />
+		<constructor-arg value="pass_1" />
+	</bean>
+	<bean id="user2" class="org.bds.touch.model.User">
+		<constructor-arg value="2" />
+		<constructor-arg value="testname_2" />
+		<constructor-arg value="pass_2" />
+	</bean>
+
+	<bean id="userresource_1" class="org.bds.touch.rest.UserResource">
+		<constructor-arg>
+			<null />
+		</constructor-arg>
+		<constructor-arg ref="request_1" />
+		<constructor-arg>
+			<null />
+		</constructor-arg>
+	</bean>
+	<bean id="request_1" class="org.restlet.data.Request">
+		<property name="attributes">
+			<map>
+				<entry key="userId" value="1" />
+			</map>
+		</property>
+	</bean>
+
+	<bean id="userlistresource_1" class="org.bds.touch.rest.UserListResource">
+		<constructor-arg>
+			<null />
+		</constructor-arg>
+		<constructor-arg ref="request_2" />
+		<constructor-arg>
+			<null />
+		</constructor-arg>
+	</bean>
+	<bean id="request_2" class="org.restlet.data.Request">
+		<property name="attributes">
+			<null />
+		</property>
+		<property name="resourceRef" ref="request_2_resourceRef" />
+	</bean>
+	<bean id="request_2_resourceRef" class="org.restlet.data.Reference">
+		<property name="baseRef" ref="request_2_resourceRef_baseRef" />
+	</bean>
+	<bean id="request_2_resourceRef_baseRef" class="org.restlet.data.Reference">
+		<constructor-arg value="http://www.test.org/users" />	
+	</bean>
+</beans>
