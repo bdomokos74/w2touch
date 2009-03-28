@@ -14,7 +14,6 @@ import org.restlet.resource.DomRepresentation;
 import org.restlet.resource.Representation;
 import org.restlet.resource.ResourceException;
 import org.restlet.resource.Variant;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public class UserResource extends AbstractResource implements XhtmlCallback<User, Object> {
@@ -37,8 +36,8 @@ public class UserResource extends AbstractResource implements XhtmlCallback<User
 		builder.setTitle("User details");
 		if (MediaType.TEXT_XML.equals(variant.getMediaType())) {
 			try {				
-				String userId = (String)getRequest().getAttributes().get("userId");
-				User user= ServiceLocator.getUserDao().findUserById(Integer.parseInt(userId));
+				String userName = (String)getRequest().getAttributes().get("userName");
+				User user= ServiceLocator.getUserDao().findUserByName(userName);
 				builder.setHeader(user);
 				repr = builder.buildXhtml();
 			} catch (ParserConfigurationException e) {
@@ -61,8 +60,11 @@ public class UserResource extends AbstractResource implements XhtmlCallback<User
 	public Element buildHeaderPart(XhtmlBuilder<User, Object> builder,
 			User user) {
 		Element dlElem = builder.createElement("dl");
-		builder.addPair(dlElem, "name", String.valueOf(user.getName()));
+		builder.addPair(dlElem, "name", user.getName());
 		builder.addPair(dlElem, "id", String.valueOf(user.getId()));
+		Element aElement = builder.createElement("a");
+		aElement.setAttribute("href", getBaseUrl()+"/"+user.getName()+"/chats");
+		builder.addPair(dlElem, "chats", aElement);
 		return dlElem;
 	}
 

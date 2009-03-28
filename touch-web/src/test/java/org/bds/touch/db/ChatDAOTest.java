@@ -84,10 +84,18 @@ public class ChatDAOTest {
 		assertEquals("chatname2", chatList.get(0).getChatName());
 	}
 	@Test
+	public void testFindChatByUserName_1() throws Exception {
+		Chat chat = chatDao.createChat("chatname1", user.getId(), otherName );
+		Chat chat2 = chatDao.createChat("chatname2", user2.getId(), otherName );
+		List<Chat> chatList = chatDao.findAllChatByUserName(user2.getName());
+		assertEquals(1, chatList.size());
+		assertEquals("chatname2", chatList.get(0).getChatName());
+	}
+	@Test
 	public void testFindChatByName_1() throws Exception {
 		Chat chat = chatDao.createChat("chatname1", user.getId(), otherName );
 		Chat chat2 = chatDao.createChat("chatname2", user2.getId(), otherName );
-		Chat readFromDb = chatDao.findChatByName(user2.getId(), "chatname2");
+		Chat readFromDb = chatDao.findChatByName(user2.getName(), "chatname2");
 		assertNotNull(readFromDb);
 		assertEquals("chatname2", readFromDb.getChatName());
 	}

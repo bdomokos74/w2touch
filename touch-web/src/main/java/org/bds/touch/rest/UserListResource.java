@@ -84,12 +84,11 @@ public class UserListResource extends AbstractResource implements XhtmlCallback<
 	}
 
 	public Element buildItemPart(XhtmlBuilder<Object, User> builder, User u) {
-		Element pElement = builder.createElement("p");
+		Element pElement = builder.createElement("li");
 		pElement.setAttribute("class", "user");
 		Element aElement = builder.createElement("a");
 		pElement.appendChild(aElement);
-		aElement.setAttribute("href", getBaseUrl().toString()+"/"+u.getId() ); 
-		aElement.setTextContent(u.getName());
+		aElement.setAttribute("href", getBaseUrl().toString()+"/"+u.getName() ); 
 		return pElement;
 	}
 }

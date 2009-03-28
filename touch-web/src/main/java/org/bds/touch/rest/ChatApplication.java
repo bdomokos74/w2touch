@@ -24,10 +24,10 @@ public class ChatApplication extends Application {
 
 		// Defines only one route
 		router.attach("/users", UserListResource.class); // GET,POST(name,pw)
-		router.attach("/users/{userId}", UserResource.class); // GET
-		router.attach("/users/{userId}/chats", ChatListResource.class); // GET,POST(chatName,partyName)
-		router.attach("/users/{userId}/chats/{chatName}", ChatResource.class); // GET,PUT,POST(text,direction),DELETE
-		router.attach("/users/{userId}/chats/{chatName}/{postId}", PostResource.class); // GET
+		router.attach("/users/{userName}", UserResource.class); // GET
+		router.attach("/users/{userName}/chats", ChatListResource.class); // GET,POST(chatName,partyName)
+		router.attach("/users/{userName}/chats/{chatName}", ChatResource.class); // GET,PUT,POST(text,direction),DELETE
+		router.attach("/users/{userName}/chats/{chatName}/{postId}", PostResource.class); // GET
 		//router.attach("/users/{userId}/contacts", ContactListResource.class); // GET
 		//router.attach("/users/{userId}/contacts/{contactName}", ContactResource.class); // GET,PUT
 

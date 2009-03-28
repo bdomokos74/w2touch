@@ -9,6 +9,10 @@
       <dd>testname_1</dd>
       <dt>id</dt>
       <dd>1</dd>
+      <dt>chats</dt>
+      <dd>
+        <a href="http://www.test.org/users/testname_1/chats"/>
+      </dd>
     </dl>
   </body>
 </html>

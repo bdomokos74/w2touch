@@ -97,6 +97,12 @@ public class XhtmlBuilder<T, S> {
 		ddElem.setTextContent(value);
 	}
 
+	public void addPair(Element parentElement, String key, Element value) {
+		Element dtElem = addNewElement(parentElement, "dt");
+		dtElem.setTextContent(key);
+		Element ddElem = addNewElement(parentElement, "dd");
+		ddElem.appendChild(value);
+	}
 
 	protected Element buildHeadAndBody(Element docElement, String title) {
 		Element head = addNewElement(docElement, "head");
@@ -160,7 +166,4 @@ public class XhtmlBuilder<T, S> {
 
 		return repr;
 	}
-
-	
-
 }

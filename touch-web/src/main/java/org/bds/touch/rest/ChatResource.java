@@ -9,8 +9,10 @@ import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.bds.touch.db.ChatDAO;
+import org.bds.touch.db.ServiceLocator;
 import org.bds.touch.model.Chat;
 import org.bds.touch.model.Post;
+import org.bds.touch.model.User;
 import org.restlet.Context;
 import org.restlet.data.Form;
 import org.restlet.data.MediaType;
@@ -35,7 +37,6 @@ public class ChatResource extends Resource implements XhtmlCallback<Chat,Post>{
 	}
 
 	public Element buildHeaderPart(XhtmlBuilder<Chat,Post> builder, Chat chat) {
-		System.out.println("ownerid="+getOwnerId()+" chatname="+getChatName());
 		Element dlElem = builder.createElement("dl");
 		builder.addPair(dlElem, "chatName", chat.getChatName());
 		builder.addPair(dlElem, "otherName", chat.getOtherName());
@@ -55,24 +56,18 @@ public class ChatResource extends Resource implements XhtmlCallback<Chat,Post>{
 	private String getChatName() {
 		return getAttribute("chatName");
 	}
-	private int getOwnerId() {
-		return Integer.parseInt(getAttribute("userId"));
+	private String getUserName() {
+		return getAttribute("userName");
 	}
 
 	private String getAttribute(String attrName) {
 		return (String)getRequest().getAttributes().get(attrName);
 	}
 	
-	public String getResourceClass() {
-		return "post";
-	}
-
 	public String getPostLink(Post p) {
 		Reference baseRef = getRequest().getResourceRef().getBaseRef();
 		return baseRef + "/" + p.getId();
 	}
-
-	
 
 	/**
 	 * Handle GET. Returns a full representation for a given variant.
@@ -80,14 +75,18 @@ public class ChatResource extends Resource implements XhtmlCallback<Chat,Post>{
 	@Override
 	public Representation represent(Variant variant) throws ResourceException {
 		DomRepresentation repr = null;
-		Chat chat = getChatApplication().getChatDao().findChatByName(getOwnerId(), getChatName());
+		Chat chat = ServiceLocator.getChatDao().findChatByName(getUserName(), getChatName());
 		if(chat == null) {
+			throw new ResourceException(404);
+		}
+		User user = ServiceLocator.getUserDao().findUserByName(getUserName());
+		if(user == null) {
 			throw new ResourceException(404);
 		}
 		
 		XhtmlBuilder<Chat, Post> builder = new XhtmlBuilder<Chat,Post>(this);
 		builder.setHeader(chat);
-		List<Post> posts = (getChatApplication()).getPostDao().findAllPostsByOwnerIdAndChatName(getOwnerId(), getChatName());
+		List<Post> posts = ServiceLocator.getPostDao().findAllPostsByOwnerIdAndChatName(user.getId(), getChatName());
 		builder.setChildren(posts);
 		if (MediaType.TEXT_XML.equals(variant.getMediaType())) {
 			try {
@@ -127,7 +126,7 @@ public class ChatResource extends Resource implements XhtmlCallback<Chat,Post>{
 			getResponse().setEntity(builder.buildErrorRepr(1, "Invalid parameters"));
 		}
 		
-		Chat chat = getChatApplication().getChatDao().findChatByName(getOwnerId(), getChatName());
+		Chat chat = getChatApplication().getChatDao().findChatByName(getUserName(), getChatName());
 		Post post = getChatApplication().getPostDao()
 				.createPost(chat.getId(), Post.Direction.getDirection(idir), text);
 
@@ -158,7 +157,7 @@ public class ChatResource extends Resource implements XhtmlCallback<Chat,Post>{
 	@Override
 	public void delete() {
 		ChatDAO chatDao = getChatApplication().getChatDao();
-		Chat chat = chatDao.findChatByName(getOwnerId(), getChatName());
+		Chat chat = chatDao.findChatByName(getUserName(), getChatName());
 		chatDao.delete(chat.getId());
 		// TODO delete the posts as well, this will cause integrity violation
 	}

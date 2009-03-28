@@ -11,10 +11,11 @@ import org.springframework.jdbc.core.simple.SimpleJdbcDaoSupport;
 
 public class JdbcChatDAO extends SimpleJdbcDaoSupport implements ChatDAO {
 
-	private static final String SELECT_ALL_CHAT = "select id, last_modified, chat_name, owner_id, party_name from chat";
-	private static final String SELECT_CHAT_BY_NAME = "select id, last_modified, chat_name, owner_id, party_name from chat where owner_id = ? and chat_name = ?";
-	private static final String SELECT_CHAT_BY_ID = "select id, last_modified, chat_name, owner_id, party_name from chat where id = ?";
-	private static final String SELECT_CHAT_BY_USERID = "select id, last_modified, chat_name, owner_id, party_name from chat where owner_id = ?";
+	private static final String FIND_ALL_CHAT = "select id, last_modified, chat_name, owner_id, party_name from chat";
+	private static final String FIND_CHAT_BY_NAME = "select id, last_modified, chat_name, owner_id, party_name from chat, user where owner_id = user.id and user.name= ? and chat_name = ?";
+	private static final String FIND_CHAT_BY_ID = "select id, last_modified, chat_name, owner_id, party_name from chat where id = ?";
+	private static final String FINDALL_CHAT_BY_USERID = "select id, last_modified, chat_name, owner_id, party_name from chat where owner_id = ?";
+	private static final String FINDALL_CHAT_BY_USERNAME = "select id, last_modified, chat_name, owner_id, party_name from chat, user where owner_id = user.id and user.name = ?";
 	private static final String DELETE_CHAT_BY_ID = "delete from chat where id = ?";
 	static final String CREATE_CHAT = "insert into chat (chat_name, owner_id, party_name) values (?, ?, ?)";
 
@@ -47,25 +48,30 @@ public class JdbcChatDAO extends SimpleJdbcDaoSupport implements ChatDAO {
 
 	
 	public List<Chat> findAllChat() {
-		List<Chat> chatList = getSimpleJdbcTemplate().query(SELECT_ALL_CHAT, mapper);
+		List<Chat> chatList = getSimpleJdbcTemplate().query(FIND_ALL_CHAT, mapper);
 		return chatList;
 	}
 
 	public List<Chat> findAllChatByUserId(int id) {
-		List<Chat> chatList = getSimpleJdbcTemplate().query(SELECT_CHAT_BY_USERID, mapper, id);
+		List<Chat> chatList = getSimpleJdbcTemplate().query(FINDALL_CHAT_BY_USERID, mapper, id);
+		return chatList;
+	}
+	public List<Chat> findAllChatByUserName(String userName) {
+		List<Chat> chatList = getSimpleJdbcTemplate().query(FINDALL_CHAT_BY_USERNAME, mapper, userName);
 		return chatList;
 	}
 
 	public Chat findChatById(int id) {
-		Chat chat = getSimpleJdbcTemplate().queryForObject(SELECT_CHAT_BY_ID, mapper, id);
+		Chat chat = getSimpleJdbcTemplate().queryForObject(FIND_CHAT_BY_ID, mapper, id);
 		return chat;
 	}
 
-	public Chat findChatByName(int id, String name) {
-		List<Chat> chats = getSimpleJdbcTemplate().query(SELECT_CHAT_BY_NAME, mapper, id, name);
+	public Chat findChatByName(String userName, String chatName) {
+		List<Chat> chats = getSimpleJdbcTemplate().query(FIND_CHAT_BY_NAME, mapper, userName, chatName);
 		if(chats==null||chats.size()==0)
 			return null;
 		else
 			return chats.get(0);
 	}
+
 }

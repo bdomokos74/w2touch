@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+       http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://www.springframework.org/schema/util
+       http://www.springframework.org/schema/util/spring-beans-2.5.xsd">
+
+	<bean class="org.springframework.beans.factory.config.CustomEditorConfigurer">
+		<property name="customEditors">
+			<map>
+				<entry key="java.util.Date">
+					<bean id="dateEditor" class="org.springframework.beans.propertyeditors.CustomDateEditor">
+						<constructor-arg>
+							<bean class="java.text.SimpleDateFormat">
+								<constructor-arg value="yyyy-MM-dd HH:mm:ss" />
+							</bean>
+						</constructor-arg>
+						<constructor-arg value="false"/>
+					</bean>
+				</entry>
+			</map>
+		</property>
+	</bean>	
+
+	<!-- users -->
+	<bean id="user1" class="org.bds.touch.model.User">
+		<constructor-arg value="1" />
+		<constructor-arg value="testname_1" />
+		<constructor-arg value="pass_1" />
+	</bean>
+	<bean id="user2" class="org.bds.touch.model.User">
+		<constructor-arg value="2" />
+		<constructor-arg value="testname_2" />
+		<constructor-arg value="pass_2" />
+	</bean>
+
+	<bean id="chat1" class="org.bds.touch.model.Chat">
+		<constructor-arg value="1" />
+		<constructor-arg value="chatname_1" />
+		<constructor-arg value="1" />
+		<constructor-arg value="chatpartner1" />
+	</bean>
+	
+	<!-- 
+	<bean id="last_date" class="java.util.Date" >
+		<property name="" value="2009-03-27 22:22:00" />
+	</bean>
+	 --> 
+
+	<bean id="chat2" class="org.bds.touch.model.Chat">
+		<constructor-arg value="2" />
+		<constructor-arg value="2009-03-27 22:22:00" />
+		<constructor-arg value="chatname_2" />
+		<constructor-arg value="1" />
+		<constructor-arg value="chatpartner2" />
+	</bean>
+	
+	<!-- Posts -->
+	<bean id="DIR_IN" class="org.bds.touch.model.Post$Direction" factory-method="valueOf">
+		<constructor-arg value="IN" />
+	</bean>
+	<bean id="DIR_OUT" class="org.bds.touch.model.Post$Direction" factory-method="valueOf">
+		<constructor-arg value="OUT" />
+	</bean>
+	
+	<bean id="post1" class="org.bds.touch.model.Post">
+		<constructor-arg value="1" />
+		<constructor-arg value="2" />
+		<constructor-arg ref="DIR_OUT" />
+		<constructor-arg value="hello there" />
+	</bean>
+	<bean id="post2" class="org.bds.touch.model.Post">
+		<constructor-arg value="2" />
+		<constructor-arg value="2" />
+		<constructor-arg ref="DIR_IN" />
+		<constructor-arg value="hi" />
+	</bean>	
+</beans>

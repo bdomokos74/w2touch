@@ -26,12 +26,29 @@ public class MockPostDAO implements PostDAO {
 
 	public List<Post> findAllPostsByOwnerIdAndChatName(int ownerId,
 			String chatName) {
-		throw new RuntimeException(
-				"Not implemented: findAllPostsByOwnerIdAndChatName");
+		if(ownerId!=2)
+			return null;
+		return posts;
 	}
 
 	public Post findPostById(int id) {
-		throw new RuntimeException("Not implemented: findPostById");
+		for(Post p : posts) {
+			if(p.getId() == id)
+				return p;
+		}
+		return null;
 	}
 
+	private String userName;
+	private String chatName;
+	private List<Post> posts;
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+	public void setChatName(String chatName) {
+		this.chatName = chatName;
+	}
+	public void setPosts(List<Post> posts) {
+		this.posts = posts;
+	}
 }

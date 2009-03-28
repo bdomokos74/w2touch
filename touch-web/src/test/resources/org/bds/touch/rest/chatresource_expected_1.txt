@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title/>
+  </head>
+  <body>
+    <dl>
+      <dt>chatName</dt>
+      <dd>chatname_2</dd>
+      <dt>otherName</dt>
+      <dd>chatpartner2</dd>
+      <dt>lastModified</dt>
+      <dd>20090327222200.000</dd>
+    </dl>
+    <ul>
+      <li>
+        <a href="http://www.test.org/users/username/chats/testchat/1">hello there</a>
+      </li>
+      <li>
+        <a href="http://www.test.org/users/username/chats/testchat/2">hi</a>
+      </li>
+    </ul>
+  </body>
+</html>

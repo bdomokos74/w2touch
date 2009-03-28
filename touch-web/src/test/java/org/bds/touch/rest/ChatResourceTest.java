@@ -9,7 +9,7 @@ import org.restlet.data.MediaType;
 import org.restlet.resource.DomRepresentation;
 import org.restlet.resource.Variant;
 
-public class UserResourceTest {
+public class ChatResourceTest {
 	TransformHelper testHelper = TransformHelper.getInstance();
 	
 	@Before
@@ -19,9 +19,9 @@ public class UserResourceTest {
 	
 	@Test
 	public void test_build_simple() throws Exception {
-		UserResource chatResource = (UserResource) ServiceLocator.getAppContext().getBean("userresource_1");
-		DomRepresentation repr = (DomRepresentation)chatResource.represent(new Variant(MediaType.TEXT_XML));
+		ChatResource userResource = (ChatResource) ServiceLocator.getAppContext().getBean("chatresource_1");
+		DomRepresentation repr = (DomRepresentation)userResource.represent(new Variant(MediaType.TEXT_XML));
 		String result = testHelper.indentXml(repr.getDocument());
-		assertEquals(testHelper.getExpectedString("/org/bds/touch/rest/userresource_expected_1.txt"), result);
+		assertEquals(testHelper.getExpectedString("/org/bds/touch/rest/chatresource_expected_1.txt"), result);
 	}
 }

@@ -24,11 +24,42 @@ public class MockChatDAO implements ChatDAO {
 	}
 
 	public Chat findChatById(int id) {
-		throw new RuntimeException("Not implemented: findChatById");
+		for(Chat c : chats) {
+			if(c.getId()==id)
+				return c;
+		}
+		return null;
 	}
 
-	public Chat findChatByName(int ownerId, String chatName) {
-		throw new RuntimeException("Not implemented: findChatByName");
+	public Chat findChatByName(String ownerName, String chatName) {
+		if(!userName.equals(ownerName)) {
+			return null;
+		}
+			
+		for(Chat c : chats) {
+			if(c.getChatName().equals(chatName))
+				return c;
+		}
+		return null;
+	}
+
+	public List<Chat> findAllChatByUserName(String userName) {
+		if (this.userName.equals(userName))
+			return chats;
+		else
+			return null;
+	}
+
+	private String userName;
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	private List<Chat> chats;
+
+	public void setChats(List<Chat> chats) {
+		this.chats = chats;
 	}
 
 }

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Chat List</title>
+  </head>
+  <body>
+    <dl>
+      <dt>user</dt>
+      <dd>
+        <a class="user" href="http://www.test.org/users/username"/>
+      </dd>
+    </dl>
+    <ul>
+      <li>
+        <a class="chat" href="http://www.test.org/users/username/chats/chatname_1"/>
+      </li>
+      <li>
+        <a class="chat" href="http://www.test.org/users/username/chats/chatname_2"/>
+      </li>
+    </ul>
+  </body>
+</html>

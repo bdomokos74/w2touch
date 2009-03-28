@@ -10,7 +10,8 @@ public interface ChatDAO {
 	void delete(int id);
 	List<Chat> findAllChat();
 	List<Chat> findAllChatByUserId(int id);
+	List<Chat> findAllChatByUserName(String userName);
 	Chat findChatById(int id);
-	Chat findChatByName(int ownerId, String chatName);
+	Chat findChatByName(String ownerName, String chatName);
 
 }

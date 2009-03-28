@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Post details</title>
+  </head>
+  <body>
+    <dl>
+      <dt>chat</dt>
+      <dd>
+        <a href="http://www.test.org/users/username/chats/testchat"/>
+      </dd>
+      <dt>text</dt>
+      <dd>hello there</dd>
+      <dt>dir</dt>
+      <dd>OUT</dd>
+    </dl>
+  </body>
+</html>

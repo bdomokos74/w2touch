@@ -5,11 +5,12 @@ import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.bds.touch.db.ServiceLocator;
 import org.bds.touch.model.Chat;
+import org.bds.touch.model.User;
 import org.restlet.Context;
 import org.restlet.data.Form;
 import org.restlet.data.MediaType;
-import org.restlet.data.Reference;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
@@ -28,36 +29,37 @@ public class ChatListResource extends AbstractResource implements XhtmlCallback<
 		getVariants().add(new Variant(MediaType.TEXT_XML));
 	}
 	
-	private int getUserId() {
-		return Integer.parseInt((String)getRequest().getAttributes().get("userId"));
+	private String getUserName() {
+		return (String)getRequest().getAttributes().get("userName");
 	}
 
-	public String getLink(Chat chat) {
-		Reference baseRef = getBaseUrl();
-		return baseRef + "/" + chat.getChatName();
+	public String getChatLink(Chat chat) {
+		return getBaseUrl() + "/" + chat.getChatName();
 	}
 
 	public List<Chat> getChatList() {
-		int userId = getUserId();
-		List<Chat> persistedChats = ((ChatApplication) getApplication()).getChatDao().findAllChatByUserId(userId);
+		List<Chat> persistedChats = ServiceLocator.getChatDao().findAllChatByUserName(getUserName());
 		return persistedChats;
 	}
 	
 	public Element buildHeaderPart(XhtmlBuilder<Object,Chat> builder, Object o) {
-		Element pElement = builder.createElement("p");
-		pElement.setAttribute("class", "user");
-		Element aElement = builder.createElement("a");
-		pElement.appendChild(aElement);
+		Element dlElement = builder.createElement("dl");
+		Element dtElement = builder.addNewElement(dlElement, "dt");
+		dtElement.setTextContent("user");
+		Element ddElement = builder.addNewElement(dlElement, "dd");
+		Element aElement = builder.addNewElement(ddElement, "a");
+		aElement.setAttribute("class", "user");
 		aElement.setAttribute("href", trimLastPart(getBaseUrl().toString())); 
-		aElement.setTextContent("User");
-		return pElement;
+		return dlElement;
 	}
 	
 	public Element buildItemPart(XhtmlBuilder<Object, Chat> builder, Chat c) {
-		Element liElement = builder.createElement("li");
+		Element ulElement = builder.createElement("ul");
+		ulElement.setAttribute("class", "chats");
+		Element liElement = builder.addNewElement(ulElement, "li");
 		Element aElement = builder.addNewElement(liElement, "a");
-		aElement.setAttribute("href", getLink(c));
-		aElement.setTextContent(c.getChatName());
+		aElement.setAttribute("class", "chat");
+		aElement.setAttribute("href", getChatLink(c));
 		return liElement;
 	}
 	
@@ -76,7 +78,6 @@ public class ChatListResource extends AbstractResource implements XhtmlCallback<
 
 		XhtmlBuilder<Object,Chat> builder = new XhtmlBuilder<Object, Chat>(this);
 		builder.setTitle("Chat List");
-		builder.setHeader(null);
 		List<Chat> chatList = getChatList();
 		builder.setChildren(chatList);
 		if (MediaType.TEXT_XML.equals(variant.getMediaType())) {
@@ -107,8 +108,8 @@ public class ChatListResource extends AbstractResource implements XhtmlCallback<
 			return;
 		}
 
-		Chat chat = ((ChatApplication) getApplication()).getChatDao()
-				.createChat(chatName, getUserId(), partyName);
+		User user = ServiceLocator.getUserDao().findUserByName(getUserName());
+		Chat chat = ServiceLocator.getChatDao().createChat(chatName, user.getId(), partyName);
 
 		getResponse().setStatus(Status.SUCCESS_CREATED);
 		
