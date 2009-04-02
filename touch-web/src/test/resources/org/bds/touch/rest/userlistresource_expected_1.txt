@@ -6,10 +6,10 @@
   <body>
     <ul>
       <li class="user">
-        <a href="http://www.test.org/users/testname_1"/>
+        <a href="http://www.test.org/users/username_1">username_1</a>
       </li>
       <li class="user">
-        <a href="http://www.test.org/users/testname_2"/>
+        <a href="http://www.test.org/users/username_2">username_2</a>
       </li>
     </ul>
   </body>

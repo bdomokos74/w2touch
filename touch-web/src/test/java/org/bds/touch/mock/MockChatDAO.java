@@ -1,14 +1,19 @@
 package org.bds.touch.mock;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bds.touch.db.ChatDAO;
+import org.bds.touch.db.ServiceLocator;
 import org.bds.touch.model.Chat;
+import org.bds.touch.model.User;
 
 public class MockChatDAO implements ChatDAO {
 
 	public Chat createChat(String chatName, int ownerId, String otherName) {
-		throw new RuntimeException("Not implemented: createChat");
+		Chat chat = new Chat(chats.size()+1, chatName, ownerId, otherName);
+		chats.add(chat);
+		return chat;
 	}
 
 	public void delete(int id) {
@@ -32,22 +37,26 @@ public class MockChatDAO implements ChatDAO {
 	}
 
 	public Chat findChatByName(String ownerName, String chatName) {
-		if(!userName.equals(ownerName)) {
+		User user = ServiceLocator.getUserDao().findUserByName(ownerName);
+		if(user==null) {
 			return null;
 		}
 			
 		for(Chat c : chats) {
-			if(c.getChatName().equals(chatName))
+			if(c.getChatName().equals(chatName) && c.getOwnerId()==user.getId())
 				return c;
 		}
 		return null;
 	}
 
 	public List<Chat> findAllChatByUserName(String userName) {
-		if (this.userName.equals(userName))
-			return chats;
-		else
-			return null;
+		User user = ServiceLocator.getUserDao().findUserByName(userName);
+		List<Chat> list = new ArrayList<Chat>();
+		for(Chat c : chats) {
+			if(c.getOwnerId() == user.getId())
+				list.add(c);
+		}
+		return list;
 	}
 
 	private String userName;

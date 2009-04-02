@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+       http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://www.springframework.org/schema/util
+       http://www.springframework.org/schema/util/spring-beans-2.5.xsd">
+
+	<import resource="testbeans.xml" />
+	
+	<!-- UserResource -->
+	<bean id="userresource_1" class="org.bds.touch.rest.UserResource">
+		<constructor-arg>
+			<null />
+		</constructor-arg>
+		<constructor-arg ref="user_request" />
+		<constructor-arg>
+			<null />
+		</constructor-arg>
+	</bean>
+	<bean id="request_resourceRef" class="org.restlet.data.Reference">
+		<property name="baseRef" ref="request_resourceRef_baseRef" />
+	</bean>
+	<bean id="request_resourceRef_baseRef" class="org.restlet.data.Reference">
+		<constructor-arg value="http://www.test.org/users/username" />
+	</bean>
+
+	<bean id="user_request" class="org.restlet.data.Request">
+		<property name="attributes">
+			<map>
+				<entry key="userName" value="username_1" />
+			</map>
+		</property>
+		<property name="resourceRef" ref="request_resourceRef" />
+	</bean>
+
+</beans>

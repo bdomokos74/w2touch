@@ -7,7 +7,7 @@ CREATE TABLE USER (
 	name VARCHAR(20) not null,
 	pw VARCHAR(20) not null
 );
-
+ALTER TABLE USER ADD CONSTRAINT username_uniqe UNIQUE (name);
 
 CREATE TABLE CHAT (
 	id INTEGER IDENTITY,

@@ -22,13 +22,12 @@ import org.restlet.data.Response;
 import org.restlet.data.Status;
 import org.restlet.resource.DomRepresentation;
 import org.restlet.resource.Representation;
-import org.restlet.resource.Resource;
 import org.restlet.resource.ResourceException;
 import org.restlet.resource.StringRepresentation;
 import org.restlet.resource.Variant;
 import org.w3c.dom.Element;
 
-public class ChatResource extends Resource implements XhtmlCallback<Chat,Post>{
+public class ChatResource extends AbstractResource implements XhtmlCallback<Chat,Post>{
 	private static DateFormat fmt = new SimpleDateFormat("yyyyMMddHHmmss.SSS"); 
 	public ChatResource(Context context, Request request, Response response) {
 		super(context, request, response);
@@ -53,17 +52,10 @@ public class ChatResource extends Resource implements XhtmlCallback<Chat,Post>{
 		return liElement;
 	}
 
-	private String getChatName() {
+	protected String getChatName() {
 		return getAttribute("chatName");
 	}
-	private String getUserName() {
-		return getAttribute("userName");
-	}
 
-	private String getAttribute(String attrName) {
-		return (String)getRequest().getAttributes().get(attrName);
-	}
-	
 	public String getPostLink(Post p) {
 		Reference baseRef = getRequest().getResourceRef().getBaseRef();
 		return baseRef + "/" + p.getId();
@@ -109,9 +101,9 @@ public class ChatResource extends Resource implements XhtmlCallback<Chat,Post>{
 	@Override
 	public void acceptRepresentation(Representation entity)
 			throws ResourceException {
-		Form form = new Form(entity);
+		Form form = transformRepresentation(entity);
 		String text = form.getFirstValue("text");
-		String dir = form.getFirstValue("direction");
+		String dir = form.getFirstValue("dir");
 
 		if (text == null || dir == null) {
 			XhtmlBuilder<Chat,Post> builder = new XhtmlBuilder<Chat,Post>(this);
@@ -126,8 +118,8 @@ public class ChatResource extends Resource implements XhtmlCallback<Chat,Post>{
 			getResponse().setEntity(builder.buildErrorRepr(1, "Invalid parameters"));
 		}
 		
-		Chat chat = getChatApplication().getChatDao().findChatByName(getUserName(), getChatName());
-		Post post = getChatApplication().getPostDao()
+		Chat chat = ServiceLocator.getChatDao().findChatByName(getUserName(), getChatName());
+		Post post = ServiceLocator.getPostDao()
 				.createPost(chat.getId(), Post.Direction.getDirection(idir), text);
 
 		getResponse().setStatus(Status.SUCCESS_CREATED);
@@ -156,7 +148,7 @@ public class ChatResource extends Resource implements XhtmlCallback<Chat,Post>{
 	
 	@Override
 	public void delete() {
-		ChatDAO chatDao = getChatApplication().getChatDao();
+		ChatDAO chatDao = ServiceLocator.getChatDao();
 		Chat chat = chatDao.findChatByName(getUserName(), getChatName());
 		chatDao.delete(chat.getId());
 		// TODO delete the posts as well, this will cause integrity violation

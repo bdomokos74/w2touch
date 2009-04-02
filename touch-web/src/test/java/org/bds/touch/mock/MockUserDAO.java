@@ -1,6 +1,5 @@
 package org.bds.touch.mock;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,11 +10,14 @@ import org.springframework.beans.factory.InitializingBean;
 
 public class MockUserDAO implements UserDAO, InitializingBean {
 
-	private Map<Integer,User> usersById;
+	private List<User> users;
 	private Map<String,User> usersByName = new HashMap<String, User>();
 
 	public User createUser(String name, String password) {
-		throw new RuntimeException("Not implemented: createUser");
+		User u = new User(users.size()+1, name, password);
+		users.add(u);
+		usersByName.put(u.getName(), u);
+		return u;
 	}
 
 	public void deleteUserById(int id) {
@@ -23,7 +25,7 @@ public class MockUserDAO implements UserDAO, InitializingBean {
 	}
 
 	public User findUserById(int id) {
-		return usersById.get(id);
+		return users.get(id);
 	}
 
 	public User findUserByName(String name) {
@@ -31,18 +33,18 @@ public class MockUserDAO implements UserDAO, InitializingBean {
 	}
 
 	public List<User> findUsers() {
-		return new ArrayList<User>(usersById.values());
+		return users;
 	}
 
 	/*
 	 * Mock methods
 	 */
-	public void setUsers(Map<Integer, User> users) {
-		this.usersById = users;
+	public void setUsers(List<User> users) {
+		this.users = users;
 	}
 
 	public void afterPropertiesSet() throws Exception {
-		for(User u : usersById.values()) {
+		for(User u : users) {
 			usersByName.put(u.getName(), u);
 		}
 	}

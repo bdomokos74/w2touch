@@ -16,7 +16,7 @@ public class PostResourceTest {
 	
 	@Before
 	public void before() {
-		ServiceLocator.setContext("/org/bds/touch/db/mocked-context.xml");	
+		ServiceLocator.setContext("/org/bds/touch/db/postresource-test-context.xml");	
 	}
 	
 	@Test

@@ -66,4 +66,8 @@ public class Post {
 		return text;
 	}
 	
+	@Override
+	public String toString() {
+		return "Post["+id+","+chatId+","+direction+"]";
+	}
 }

@@ -1,9 +1,5 @@
 package org.bds.touch.rest;
 
-import org.bds.touch.db.ChatDAO;
-import org.bds.touch.db.PostDAO;
-import org.bds.touch.db.ServiceLocator;
-import org.bds.touch.db.UserDAO;
 import org.restlet.Application;
 import org.restlet.Restlet;
 import org.restlet.Router;
@@ -32,17 +28,5 @@ public class ChatApplication extends Application {
 		//router.attach("/users/{userId}/contacts/{contactName}", ContactResource.class); // GET,PUT
 
 		return router;
-	}
-	
-	public UserDAO getUserDao() {
-		return ServiceLocator.getUserDao();
-	}
-
-	public ChatDAO getChatDao() {
-		return ServiceLocator.getChatDao();
-	}
-	
-	public PostDAO getPostDao() {
-		return ServiceLocator.getPostDao();
 	}
 }

@@ -7,15 +7,15 @@
     <dl>
       <dt>user</dt>
       <dd>
-        <a class="user" href="http://www.test.org/users/username"/>
+        <a class="user" href="http://www.test.org/users/username">username_1</a>
       </dd>
     </dl>
     <ul>
       <li>
-        <a class="chat" href="http://www.test.org/users/username/chats/chatname_1"/>
+        <a class="chat" href="http://www.test.org/users/username/chats/chatname_1">chatname_1</a>
       </li>
       <li>
-        <a class="chat" href="http://www.test.org/users/username/chats/chatname_2"/>
+        <a class="chat" href="http://www.test.org/users/username/chats/chatname_2">chatname_2</a>
       </li>
     </ul>
   </body>

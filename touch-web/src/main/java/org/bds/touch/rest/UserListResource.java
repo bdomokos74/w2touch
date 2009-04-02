@@ -58,7 +58,7 @@ public class UserListResource extends AbstractResource implements XhtmlCallback<
 	@Override
 	public void acceptRepresentation(Representation entity)
 			throws ResourceException {
-		Form form = new Form(entity);
+		Form form = transformRepresentation(entity);
 		String name = form.getFirstValue("name");
 		String pw = form.getFirstValue("pw");
 
@@ -73,8 +73,7 @@ public class UserListResource extends AbstractResource implements XhtmlCallback<
 		getResponse().setStatus(Status.SUCCESS_CREATED);
 		Representation rep = new StringRepresentation("Item created "+user.getId()+"\n",
 				MediaType.TEXT_PLAIN);
-		rep.setIdentifier(getRequest().getResourceRef().getIdentifier() + "/"
-				+ user.getId());
+		rep.setIdentifier(getBaseUrl() + "/" + user.getId());
 		getResponse().setEntity(rep);
 
 	}
@@ -87,8 +86,9 @@ public class UserListResource extends AbstractResource implements XhtmlCallback<
 		Element pElement = builder.createElement("li");
 		pElement.setAttribute("class", "user");
 		Element aElement = builder.createElement("a");
+		aElement.setTextContent(u.getName());
 		pElement.appendChild(aElement);
-		aElement.setAttribute("href", getBaseUrl().toString()+"/"+u.getName() ); 
+		aElement.setAttribute("href", getBaseUrl()+"/"+u.getName() ); 
 		return pElement;
 	}
 }

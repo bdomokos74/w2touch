@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+       http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://www.springframework.org/schema/util
+       http://www.springframework.org/schema/util/spring-beans-2.5.xsd">
+
+	<import resource="testbeans.xml" />
+
+	<!-- ChatResource -->
+	<bean id="request_chat_resourceRef" class="org.restlet.data.Reference">
+		<property name="baseRef" ref="request_chat_resourceRef_baseRef" />
+	</bean>
+	<bean id="request_chat_resourceRef_baseRef" class="org.restlet.data.Reference">
+		<constructor-arg value="http://www.test.org/users/username/chats/testchat" />
+	</bean>
+
+	<bean id="chatresource_1" class="org.bds.touch.rest.ChatResource">
+		<constructor-arg>
+			<null />
+		</constructor-arg>
+		<constructor-arg ref="request_chatreq" />
+		<constructor-arg>
+			<null />
+		</constructor-arg>
+	</bean>
+	<bean id="request_chatreq" class="org.restlet.data.Request">
+		<property name="attributes">
+			<map>
+				<entry key="userName" value="username_1" />
+				<entry key="chatName" value="chatname_2" />
+			</map>
+		</property>
+		<property name="resourceRef" ref="request_chat_resourceRef" />
+	</bean>
+	
+	
+	<bean id="chatresource_2" class="org.bds.touch.rest.ChatResource">
+		<constructor-arg>
+			<null />
+		</constructor-arg>
+		<constructor-arg ref="request_chatreq_acceptrep" />
+		<constructor-arg ref="response_chatreq_acceptrep"/>
+	</bean>
+	<bean id="request_chatreq_acceptrep" class="org.restlet.data.Request">
+		<property name="attributes">
+			<map>
+				<entry key="userName" value="username_1" />
+				<entry key="chatName" value="chatname_1" />
+			</map>
+		</property>
+		<property name="resourceRef" ref="request_chat_resourceRef" />
+	</bean>
+	<bean id="response_chatreq_acceptrep" class="org.restlet.data.Response" >
+		<constructor-arg ref="request_chatreq_acceptrep" />
+	</bean>
+
+</beans>

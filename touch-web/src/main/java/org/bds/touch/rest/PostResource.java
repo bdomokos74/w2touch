@@ -15,13 +15,26 @@ import org.restlet.data.Response;
 import org.restlet.data.Status;
 import org.restlet.resource.DomRepresentation;
 import org.restlet.resource.Representation;
-import org.restlet.resource.Resource;
 import org.restlet.resource.ResourceException;
 import org.restlet.resource.Variant;
 import org.w3c.dom.Element;
 
 public class PostResource extends AbstractResource implements
-		XhtmlCallback<Post, Object> {
+		XhtmlCallback<PostResource.ReqHolder, Object> {
+	static class ReqHolder {
+		private final Post post;
+		private final Chat chat;
+		public ReqHolder(Post post, Chat chat) {
+			this.post = post;
+			this.chat = chat;
+		}
+		public Post getPost() {
+			return post;
+		}
+		public Chat getChat() {
+			return chat;
+		}
+	}
 	public PostResource(Context context, Request request, Response response) {
 		super(context, request, response);
 		getVariants().add(new Variant(MediaType.TEXT_XML));
@@ -30,8 +43,8 @@ public class PostResource extends AbstractResource implements
 	@Override
 	public Representation represent(Variant variant) throws ResourceException {
 		DomRepresentation repr = null;
-		String postId = (String) getRequest().getAttributes().get("postId");
-		String userName = (String) getRequest().getAttributes().get("userName");
+		String postId = getAttribute("postId");
+		String userName = getUserName();
 
 		Post post = ServiceLocator.getPostDao().findPostById(Integer.parseInt(postId));
 		if(post==null)
@@ -42,10 +55,9 @@ public class PostResource extends AbstractResource implements
 		if(!userName.equals(user.getName()))
 			throw new ResourceException(Status.CLIENT_ERROR_UNAUTHORIZED, ".");
 			
-		XhtmlBuilder<Post, Object> builder = new XhtmlBuilder<Post, Object>(
-				this);
+		XhtmlBuilder<PostResource.ReqHolder, Object> builder = new XhtmlBuilder<PostResource.ReqHolder, Object>(this);
 		builder.setTitle("Post details");
-		builder.setHeader(post);
+		builder.setHeader(new ReqHolder(post, chat));
 		if (MediaType.TEXT_XML.equals(variant.getMediaType())) {
 			try {
 
@@ -60,18 +72,19 @@ public class PostResource extends AbstractResource implements
 		return repr;
 	}
 
-	public Element buildHeaderPart(XhtmlBuilder<Post, Object> builder,
-			Post post) {
+	public Element buildHeaderPart(XhtmlBuilder<PostResource.ReqHolder, Object> builder,
+			PostResource.ReqHolder holder) {
 		Element dlElem = builder.createElement("dl");
 		Element aElement = builder.createElement("a");
-		aElement.setAttribute("href", trimLastPart(getBaseUrl().toString()) );
+		aElement.setTextContent(holder.getChat().getChatName());
+		aElement.setAttribute("href", trimLastPart(getBaseUrl()) );
 		builder.addPair(dlElem, "chat", aElement);
-		builder.addPair(dlElem, "text", String.valueOf(post.getText()));
-		builder.addPair(dlElem, "dir", String.valueOf(post.getDirection()));
+		builder.addPair(dlElem, "text", String.valueOf(holder.getPost().getText()));
+		builder.addPair(dlElem, "dir", String.valueOf(holder.getPost().getDirection()));
 		return dlElem;
 	}
 
-	public Element buildItemPart(XhtmlBuilder<Post, Object> builder, Object item) {
+	public Element buildItemPart(XhtmlBuilder<PostResource.ReqHolder, Object> builder, Object item) {
 		return null;
 	}
 }

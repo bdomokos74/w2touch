@@ -36,7 +36,7 @@ public class UserResource extends AbstractResource implements XhtmlCallback<User
 		builder.setTitle("User details");
 		if (MediaType.TEXT_XML.equals(variant.getMediaType())) {
 			try {				
-				String userName = (String)getRequest().getAttributes().get("userName");
+				String userName = getAttribute("userName");
 				User user= ServiceLocator.getUserDao().findUserByName(userName);
 				builder.setHeader(user);
 				repr = builder.buildXhtml();
@@ -53,8 +53,9 @@ public class UserResource extends AbstractResource implements XhtmlCallback<User
 	
 	@Override
 	public void delete() {
-		String userId = (String) getRequest().getAttributes().get("userId");
-		((ChatApplication)getApplication()).getUserDao().deleteUserById(Integer.parseInt(userId));
+		// TODO security
+		String userId = getAttribute("userId");
+		ServiceLocator.getUserDao().deleteUserById(Integer.parseInt(userId));
 	}
 
 	public Element buildHeaderPart(XhtmlBuilder<User, Object> builder,
@@ -63,7 +64,8 @@ public class UserResource extends AbstractResource implements XhtmlCallback<User
 		builder.addPair(dlElem, "name", user.getName());
 		builder.addPair(dlElem, "id", String.valueOf(user.getId()));
 		Element aElement = builder.createElement("a");
-		aElement.setAttribute("href", getBaseUrl()+"/"+user.getName()+"/chats");
+		aElement.setAttribute("href", getBaseUrl()+"/chats");
+		aElement.setTextContent("chats");
 		builder.addPair(dlElem, "chats", aElement);
 		return dlElem;
 	}

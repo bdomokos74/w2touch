@@ -24,37 +24,74 @@
 		</property>
 	</bean>	
 
+	<!-- DAOs -->
+	<bean id="userDAO" class="org.bds.touch.mock.MockUserDAO">
+		<property name="users">
+			<list>
+				<ref bean="user1" />
+				<ref bean="user2" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="chatDAO" class="org.bds.touch.mock.MockChatDAO">
+		<property name="chats">
+			<list>
+				<ref bean="chat1_user1" />
+				<ref bean="chat2_user1" />
+				<ref bean="chat1_user2" />
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="postDAO" class="org.bds.touch.mock.MockPostDAO">
+		<property name="posts">
+			<list>
+				<ref bean="post1_chat2_user1" />
+				<ref bean="post2_chat2_user1" />
+			</list>
+		</property>	
+		<property name="chats">
+			<list>
+				<ref bean="chat1_user1" />
+				<ref bean="chat2_user1" />
+				<ref bean="chat1_user2" />
+			</list>
+		</property>	
+	</bean>
+	
 	<!-- users -->
 	<bean id="user1" class="org.bds.touch.model.User">
 		<constructor-arg value="1" />
-		<constructor-arg value="testname_1" />
+		<constructor-arg value="username_1" />
 		<constructor-arg value="pass_1" />
 	</bean>
 	<bean id="user2" class="org.bds.touch.model.User">
 		<constructor-arg value="2" />
-		<constructor-arg value="testname_2" />
+		<constructor-arg value="username_2" />
 		<constructor-arg value="pass_2" />
 	</bean>
 
-	<bean id="chat1" class="org.bds.touch.model.Chat">
+	<bean id="chat1_user1" class="org.bds.touch.model.Chat">
 		<constructor-arg value="1" />
 		<constructor-arg value="chatname_1" />
 		<constructor-arg value="1" />
 		<constructor-arg value="chatpartner1" />
 	</bean>
-	
-	<!-- 
-	<bean id="last_date" class="java.util.Date" >
-		<property name="" value="2009-03-27 22:22:00" />
-	</bean>
-	 --> 
 
-	<bean id="chat2" class="org.bds.touch.model.Chat">
+	<bean id="chat2_user1" class="org.bds.touch.model.Chat">
 		<constructor-arg value="2" />
 		<constructor-arg value="2009-03-27 22:22:00" />
 		<constructor-arg value="chatname_2" />
 		<constructor-arg value="1" />
 		<constructor-arg value="chatpartner2" />
+	</bean>
+	
+	<bean id="chat1_user2" class="org.bds.touch.model.Chat">
+		<constructor-arg value="3" />
+		<constructor-arg value="chatname_x" />
+		<constructor-arg value="2" />
+		<constructor-arg value="chatpartnerx" />
 	</bean>
 	
 	<!-- Posts -->
@@ -65,13 +102,13 @@
 		<constructor-arg value="OUT" />
 	</bean>
 	
-	<bean id="post1" class="org.bds.touch.model.Post">
+	<bean id="post1_chat2_user1" class="org.bds.touch.model.Post">
 		<constructor-arg value="1" />
 		<constructor-arg value="2" />
 		<constructor-arg ref="DIR_OUT" />
 		<constructor-arg value="hello there" />
 	</bean>
-	<bean id="post2" class="org.bds.touch.model.Post">
+	<bean id="post2_chat2_user1" class="org.bds.touch.model.Post">
 		<constructor-arg value="2" />
 		<constructor-arg value="2" />
 		<constructor-arg ref="DIR_IN" />

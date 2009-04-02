@@ -58,5 +58,8 @@ public class Chat {
 		return lastModified;
 	}
 	
-	
+	@Override
+	public String toString() {
+		return "Chat["+getId()+","+getChatName()+","+getOwnerId()+"]";		
+	}
 }

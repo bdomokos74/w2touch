@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+       http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://www.springframework.org/schema/util
+       http://www.springframework.org/schema/util/spring-beans-2.5.xsd">
+
+	<import resource="testbeans.xml" />
+	
+	<!-- UserListResource -->
+	<bean id="userlistresource_1" class="org.bds.touch.rest.UserListResource">
+		<constructor-arg>
+			<null />
+		</constructor-arg>
+		<constructor-arg ref="userlist_request" />
+		<constructor-arg ref="userlist_response" />
+	</bean>
+	<bean id="userlist_request" class="org.restlet.data.Request">
+		<property name="attributes">
+			<null />
+		</property>
+		<property name="resourceRef" ref="request_userlist_resourceRef" />
+	</bean>
+	<bean id="request_userlist_resourceRef" class="org.restlet.data.Reference">
+		<property name="baseRef" ref="request_userlist_resourceRef_baseRef" />
+	</bean>
+	<bean id="request_userlist_resourceRef_baseRef" class="org.restlet.data.Reference">
+		<constructor-arg value="http://www.test.org/users" />
+	</bean>
+
+	<bean id="userlist_response" class="org.restlet.data.Response" >
+		<constructor-arg ref="userlist_request" />
+	</bean>
+</beans>

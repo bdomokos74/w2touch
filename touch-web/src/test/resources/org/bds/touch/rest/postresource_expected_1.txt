@@ -7,7 +7,7 @@
     <dl>
       <dt>chat</dt>
       <dd>
-        <a href="http://www.test.org/users/username/chats/testchat"/>
+        <a href="http://www.test.org/users/username/chats/testchat">chatname_2</a>
       </dd>
       <dt>text</dt>
       <dd>hello there</dd>

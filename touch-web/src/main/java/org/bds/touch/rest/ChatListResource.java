@@ -21,7 +21,7 @@ import org.restlet.resource.StringRepresentation;
 import org.restlet.resource.Variant;
 import org.w3c.dom.Element;
 
-public class ChatListResource extends AbstractResource implements XhtmlCallback<Object, Chat> {
+public class ChatListResource extends AbstractResource implements XhtmlCallback<User, Chat> {
 
 	public ChatListResource(Context context, Request request, Response response) {
 		super(context, request, response);
@@ -29,35 +29,36 @@ public class ChatListResource extends AbstractResource implements XhtmlCallback<
 		getVariants().add(new Variant(MediaType.TEXT_XML));
 	}
 	
-	private String getUserName() {
-		return (String)getRequest().getAttributes().get("userName");
-	}
-
 	public String getChatLink(Chat chat) {
 		return getBaseUrl() + "/" + chat.getChatName();
 	}
 
-	public List<Chat> getChatList() {
+	User getUser() {
+		return ServiceLocator.getUserDao().findUserByName(getUserName());
+	}
+	List<Chat> getChatList() {
 		List<Chat> persistedChats = ServiceLocator.getChatDao().findAllChatByUserName(getUserName());
 		return persistedChats;
 	}
 	
-	public Element buildHeaderPart(XhtmlBuilder<Object,Chat> builder, Object o) {
+	public Element buildHeaderPart(XhtmlBuilder<User,Chat> builder, User user) {
 		Element dlElement = builder.createElement("dl");
 		Element dtElement = builder.addNewElement(dlElement, "dt");
 		dtElement.setTextContent("user");
 		Element ddElement = builder.addNewElement(dlElement, "dd");
 		Element aElement = builder.addNewElement(ddElement, "a");
+		aElement.setTextContent(user.getName());
 		aElement.setAttribute("class", "user");
-		aElement.setAttribute("href", trimLastPart(getBaseUrl().toString())); 
+		aElement.setAttribute("href", trimLastPart(getBaseUrl())); 
 		return dlElement;
 	}
 	
-	public Element buildItemPart(XhtmlBuilder<Object, Chat> builder, Chat c) {
+	public Element buildItemPart(XhtmlBuilder<User, Chat> builder, Chat c) {
 		Element ulElement = builder.createElement("ul");
 		ulElement.setAttribute("class", "chats");
 		Element liElement = builder.addNewElement(ulElement, "li");
 		Element aElement = builder.addNewElement(liElement, "a");
+		aElement.setTextContent(c.getChatName());
 		aElement.setAttribute("class", "chat");
 		aElement.setAttribute("href", getChatLink(c));
 		return liElement;
@@ -76,9 +77,10 @@ public class ChatListResource extends AbstractResource implements XhtmlCallback<
 	public Representation represent(Variant variant) throws ResourceException {
 		DomRepresentation repr = null;
 
-		XhtmlBuilder<Object,Chat> builder = new XhtmlBuilder<Object, Chat>(this);
+		XhtmlBuilder<User,Chat> builder = new XhtmlBuilder<User, Chat>(this);
 		builder.setTitle("Chat List");
 		List<Chat> chatList = getChatList();
+		builder.setHeader(getUser());
 		builder.setChildren(chatList);
 		if (MediaType.TEXT_XML.equals(variant.getMediaType())) {
 			try {
@@ -94,16 +96,17 @@ public class ChatListResource extends AbstractResource implements XhtmlCallback<
 		return repr;
 	}
 
+
 	@Override
 	public void acceptRepresentation(Representation entity)
 			throws ResourceException {
-		Form form = new Form(entity);
+		Form form = transformRepresentation(entity);
 		String chatName = form.getFirstValue("chatName");
 		String partyName = form.getFirstValue("partyName");
 
 		if ( chatName == null || partyName == null ||
 				chatName.trim().equals("")||partyName.trim().equals("")) {
-			XhtmlBuilder<Object, Chat> builder = new XhtmlBuilder<Object, Chat>(this);
+			XhtmlBuilder<User, Chat> builder = new XhtmlBuilder<User, Chat>(this);
 			getResponse().setEntity(builder.buildErrorRepr(1, "Missing parameters"));
 			return;
 		}

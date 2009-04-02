@@ -42,4 +42,8 @@ public class ServiceLocator {
 	public static ApplicationContext getAppContext() {
 		return appContext;
 	}
+	
+	public static Object getBean(String name) {
+		return appContext.getBean(name);
+	}
 }
