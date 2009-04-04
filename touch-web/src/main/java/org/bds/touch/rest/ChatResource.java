@@ -3,12 +3,14 @@ package org.bds.touch.rest;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.bds.touch.db.ChatDAO;
+import org.bds.touch.db.PostDAO;
 import org.bds.touch.db.ServiceLocator;
 import org.bds.touch.model.Chat;
 import org.bds.touch.model.Post;
@@ -150,6 +152,15 @@ public class ChatResource extends AbstractResource implements XhtmlCallback<Chat
 	public void delete() {
 		ChatDAO chatDao = ServiceLocator.getChatDao();
 		Chat chat = chatDao.findChatByName(getUserName(), getChatName());
+		PostDAO postDao = ServiceLocator.getPostDao();
+		List<Post> posts = postDao.findAllPostsByChatId(chat.getId());
+		List<Integer> postIdList = new ArrayList<Integer>();
+		for(Post p : posts) {
+			postIdList.add(p.getId());
+		}
+		for( int i: postIdList) {
+			postDao.delete(i);
+		}
 		chatDao.delete(chat.getId());
 		// TODO delete the posts as well, this will cause integrity violation
 	}
