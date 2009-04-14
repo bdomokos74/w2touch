@@ -30,9 +30,18 @@ def OnAttach(status):
 # Fired on chat message status change. 
 # Statuses can be: 'UNKNOWN' 'SENDING' 'SENT' 'RECEIVED' 'READ'        
 
+conn = touch_conn.Connection('http://localhost:8080/touch-web/resources', 'testuser', '');
+
 def OnMessageStatus(Message, Status):
     if Status == 'RECEIVED':
-        print(Message.ChatName + '(' + Message.FromDisplayName + ')->Myself: ' + Message.Body);
+        print('Incoming Post: '+Message.ChatName + '(' + Message.FromDisplayName + ')->Myself: ' + Message.Body);
+        try:
+            print("creating chat: "+Message.ChatName)
+            chat = conn.getChat(Message.ChatName)
+        except(Exception ):
+            chat = conn.createChat(Message.ChatName, Message.FromDisplayName)
+        print("creating post: "+Message.ChatName+":"+Message.FromDisplayName)
+        conn.createPost(Message.ChatName, Message.Body, 0)
         
     if Status == 'SENT':
         print('Myself->:' + Message.ChatName + ' ' + Message.Body);
@@ -41,7 +50,6 @@ def OnMessageStatus(Message, Status):
 # ----------------------------------------------------------------------------------------------------
 
 # create access object to touch-web
-conn = touch_conn.Connection('http://localhost:8080/touch-web/resources', '1', '');
 
 # Creating instance of Skype object, assigning handler functions and attaching to Skype.
 skype = Skype4Py.Skype();

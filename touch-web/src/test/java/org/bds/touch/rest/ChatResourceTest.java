@@ -3,6 +3,9 @@ package org.bds.touch.rest;
 import static junit.framework.Assert.*;
 import static org.junit.Assert.*;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.List;
 import org.bds.touch.db.ServiceLocator;
 import org.bds.touch.model.Post;

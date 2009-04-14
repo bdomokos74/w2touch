@@ -39,10 +39,10 @@ public class ChatResource extends AbstractResource implements XhtmlCallback<Chat
 
 	public Element buildHeaderPart(XhtmlBuilder<Chat,Post> builder, Chat chat) {
 		Element dlElem = builder.createElement("dl");
-		builder.addPair(dlElem, "chatName", chat.getChatName());
-		builder.addPair(dlElem, "otherName", chat.getOtherName());
+		builder.addPair(dlElem, "chatName", chat.getChatName(), "chatname");
+		builder.addPair(dlElem, "otherName", chat.getOtherName(),"chatpartner");
 		Date lastModified = chat.getLastModified();
-		builder.addPair(dlElem, "lastModified", fmt.format(lastModified));
+		builder.addPair(dlElem, "lastModified", fmt.format(lastModified), "chatmodified");
 		return dlElem;
 	}
 
@@ -55,7 +55,7 @@ public class ChatResource extends AbstractResource implements XhtmlCallback<Chat
 	}
 
 	protected String getChatName() {
-		return getAttribute("chatName");
+		return decodeUrl(getAttribute("chatName"));
 	}
 
 	public String getPostLink(Post p) {

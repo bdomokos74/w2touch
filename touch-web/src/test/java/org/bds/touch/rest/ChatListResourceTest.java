@@ -42,10 +42,12 @@ public class ChatListResourceTest {
 			}
 		});
 		chatListResource.acceptRepresentation(Representation.createEmpty());
-		
 		Chat chat = ServiceLocator.getChatDao().findChatById(4);
 		assertNotNull(chat);
 		assertEquals("new_chat_1", chat.getChatName());
+
+		String result = chatListResource.getResponse().getEntity().getText();
+		assertEquals(testHelper.getExpectedString("/org/bds/touch/rest/chatlistresource_resp_expected_1.txt"), result);
 	}
 }
 

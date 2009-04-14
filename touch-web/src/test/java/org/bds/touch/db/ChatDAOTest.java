@@ -1,6 +1,7 @@
 package org.bds.touch.db;
 
 import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -10,6 +11,7 @@ import java.util.List;
 
 import org.bds.touch.model.Chat;
 import org.bds.touch.model.User;
+import org.bds.touch.rest.AbstractResource;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -54,12 +56,20 @@ public class ChatDAOTest {
 		
 	}
 
+	
 	@After
 	public void resetDB() throws SQLException {
 		List<Chat> chatList = chatDao.findAllChat();
 		for(Chat chat : chatList) {
 			chatDao.delete(chat.getId());
 		}
+	}
+
+	@Test
+	public void testEncode() throws Exception {
+		String result = AbstractResource.encodeUrl("test$ 1");
+		assertEquals("test%24+1", result);
+		assertEquals("test$ 1", AbstractResource.decodeUrl(result));	
 	}
 	
 	@Test
@@ -116,4 +126,13 @@ public class ChatDAOTest {
 		}
 	}
 	
+	
+	@Test
+	public void testCreateChat_specialchar() throws Exception {
+		@SuppressWarnings("unused")
+		Chat chat1 = chatDao.createChat("chatname$ %", user.getId(), otherName );
+		Chat readFromDb = chatDao.findChatByName(user.getName(), "chatname$ %");
+		assertNotNull(readFromDb);
+		assertEquals("chatname$ %", readFromDb.getChatName());
+	}
 }

@@ -6,11 +6,11 @@
   <body>
     <dl>
       <dt>chatName</dt>
-      <dd>chatname_2</dd>
+      <dd class="chatname">chatname_2</dd>
       <dt>otherName</dt>
-      <dd>chatpartner2</dd>
+      <dd class="chatpartner">chatpartner2</dd>
       <dt>lastModified</dt>
-      <dd>20090327222200.000</dd>
+      <dd class="chatmodified">20090327222200.000</dd>
     </dl>
     <ul>
       <li>

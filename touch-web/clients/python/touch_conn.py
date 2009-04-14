@@ -1,10 +1,11 @@
 import sys
 import re
-from xml.etree import ElementTree
+from elementtree import ElementTree
 
-#from xml.etree.ElementTree import ElementTree
 import httplib2
 import urllib
+
+from touch_data import Chat, Post
 
 class Connection:
     def __init__(self, url, userid, token):
@@ -13,50 +14,72 @@ class Connection:
         self.url = url;
         self.client = httplib2.Http(".cache")
     
-    def getroot(self):
+    def getRoot(self):
         return self.url + '/users/' + self.userid
         
-    def getchats(self):
-        response, xml = self.client.request( self.getroot() + '/chats')
+    def getChatlist(self):
+        response, xml = self.client.request( self.createChatlistURI() )
         if response['status'] != '200':
-            return null
-        trim_xmldecl = re.sub(r'^.*DOCTYPE[^>]*>\n', '', xml)
-        trim_namespace = re.sub(r'<html[^>]*>', '<html>', trim_xmldecl)
-        #print trim_namespace
-        doc = ElementTree.fromstring(trim_namespace)
-        tree = ElementTree.ElementTree(doc)
-        it = doc.getiterator()
-        #for each in it:
-        #    print each.tag
-        list = tree.findall('//ul/li/a') #[@class=\'chat\']')
+            return None()
+        tree = ElementTree.XML(xml)
+        list = tree.findall(".//{http://www.w3.org/1999/xhtml}a[@class='chat']")
         retval = []
         for each in list:
             retval.append(each.text)
-            #print each.text
         return retval
         
-    def getchat(self, chatname):
-        response, xml = self.client.request(self.getroot() + '/chats/' + chatname)
+    def getChat(self, chatname):
+        response, xml = self.client.request(self.createChatURI(chatname))
         if response['status']  == '200':
-            return 1
+            element = ElementTree.XML(xml)
+            name = element.find(".//{http://www.w3.org/1999/xhtml}dd[@class='chatname']").text
+            partner = element.find(".//{http://www.w3.org/1999/xhtml}dd[@class='chatpartner']").text
+            return Chat(name, partner)
         else:
-            return 0
+            raise Exception('Not found', chatname)
         
-    def create_addchat_uri(self):
-        return self.url+'/users/'+self.userid+'/chats'
+    def createChatlistURI(self):
+        return self.getRoot()+'/chats'
+    
+    def createChatURI(self, chatName):
+        return self.createChatlistURI()+'/'+urllib.quote(chatName)
         
-    def addchat(self, chatname, partyname):
+    def createChat(self, chatname, partyname):
         #h.add_credentials('name', 'password')
-        response, content = self.client.request(self.create_addchat_uri(), 
+        response, content = self.client.request(self.createChatlistURI(), 
                                   "POST", 
                                   body=urllib.urlencode({'chatName': chatname, 'partyName': partyname}), 
                                   headers= {'Content-type': 'application/x-www-form-urlencoded'} )
         if response['status'] != '201':
+            return None
+        else:
+            return Chat(chatname, partyname)
+            
+    def deleteChat(self, chatname):
+        response, content = self.client.request(self.createChatURI(chatname), 
+                                  "DELETE" )
+
+    def createPost(self, chatname, text, dir):
+        #h.add_credentials('name', 'password')
+        print("creating post - "+self.createChatURI(chatname))
+        response, content = self.client.request(self.createChatURI(chatname), 
+                                  "POST", 
+                                  body=urllib.urlencode({'text': text, 'dir': dir}), 
+                                  headers= {'Content-type': 'application/x-www-form-urlencoded'} )
+        print("ret - " + content)
+        if response['status'] != '200':
             raise Exception('failed request', response['status'])
         else:
-            print 'CURR:   -->'+content;
-            doc = ElementTree.fromstring(content)
-            tree = ElementTree.ElementTree(doc)
-            list = tree.findall('//ul/li/a')
-            return list
-            
+            return Post(chatname, text, dir)
+        
+    def getPostlist(self, chatname):
+        response, xml = self.client.request( self.createChatURI(chatname) )
+        if response['status'] != '200':
+            return None()
+        tree = ElementTree.XML(xml)
+        list = tree.findall('.//{http://www.w3.org/1999/xhtml}a')
+        retval = []
+        for each in list:
+            retval.append( Post(chatname, each.text, 0) )
+        return retval
+        

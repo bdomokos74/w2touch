@@ -30,7 +30,7 @@ public class ChatListResource extends AbstractResource implements XhtmlCallback<
 	}
 	
 	public String getChatLink(Chat chat) {
-		return getBaseUrl() + "/" + chat.getChatName();
+		return getBaseUrl() + "/" + encodeUrl(chat.getChatName());
 	}
 
 	User getUser() {
@@ -116,10 +116,10 @@ public class ChatListResource extends AbstractResource implements XhtmlCallback<
 
 		getResponse().setStatus(Status.SUCCESS_CREATED);
 		
-		Representation rep = new StringRepresentation("Item created "+chat.getId()+"\n",
-				MediaType.TEXT_PLAIN);
-		rep.setIdentifier(getRequest().getResourceRef().getIdentifier() + "/"+ chat.getId());
-		getResponse().setEntity(rep);
+		
+		XhtmlBuilder<User, Chat> builder = new XhtmlBuilder<User, Chat>(this);
+		//rep.setIdentifier(getRequest().getResourceRef().getIdentifier() + "/"+ chat.getId());
+		getResponse().setEntity(builder.buildResponseXmlRep("created", chat.getId(), getBaseUrl()+"/"+chat.getId()));
 
 	}
 }

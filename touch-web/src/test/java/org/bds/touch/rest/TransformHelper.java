@@ -1,6 +1,7 @@
 package org.bds.touch.rest;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -30,6 +31,11 @@ public class TransformHelper {
 		return doTransform(getResource("/indent-xml.xsl"), doc);
 	}
 
+	public String indentXml(String xml) throws IOException {
+		ByteArrayInputStream is = new ByteArrayInputStream(xml.getBytes());
+		return doTransform(new StreamSource(getResource("/indent-xml.xsl")), new StreamSource(is));
+	}
+	
 	private String doTransform(InputStream xsltLocationStream, Document xmlInput) {
 		StreamSource transformation = new StreamSource(xsltLocationStream);
 		DOMSource domSource = new DOMSource(xmlInput);

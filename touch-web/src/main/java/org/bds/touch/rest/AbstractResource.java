@@ -1,5 +1,9 @@
 package org.bds.touch.rest;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+
 import org.restlet.Context;
 import org.restlet.data.Form;
 import org.restlet.data.Request;
@@ -44,5 +48,23 @@ public abstract class AbstractResource extends Resource {
 	
 	void setFormFactory(FormFactory factory) {
 		defaultFormFactory = factory;
+	}
+
+
+	public static String encodeUrl(String str) {
+		try {
+			return URLEncoder.encode(str, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			throw new RuntimeException(e.getMessage());
+		}
+	}
+	public static String decodeUrl(String str) {
+		try {
+			return URLDecoder.decode(str, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			throw new RuntimeException(e.getMessage());
+		}
 	}
 }

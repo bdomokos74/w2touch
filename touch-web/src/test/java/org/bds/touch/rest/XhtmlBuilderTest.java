@@ -1,6 +1,7 @@
 package org.bds.touch.rest;
 
 import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.util.Arrays;
 
@@ -50,9 +51,15 @@ public class XhtmlBuilderTest {
 		builder.setChildren(Arrays.asList(new Integer(1), new Integer(2)));
 		DomRepresentation repr = builder.buildXhtml();		
 		String result = testHelper.indentXml(repr.getDocument());
-		assertEquals(
-				testHelper.getExpectedString("/org/bds/touch/rest/xhtmlbuilder_expected_children.txt"), result);
+		assertEquals(testHelper.getExpectedString("/org/bds/touch/rest/xhtmlbuilder_expected_children.txt"), result);
 	}
 	
+	@Test
+	public void testBuildResponseXmlRep() throws Exception {
+		XhtmlBuilder<Object,Integer> builder = new XhtmlBuilder<Object,Integer>(cb_test);
+		DomRepresentation repr = builder.buildResponseXmlRep("created", 1, "http://test/resource/1");
+		String result = testHelper.indentXml(repr.getDocument());
+		assertEquals(testHelper.getExpectedString("/org/bds/touch/rest/xhtmlbuilder_expected_response.txt"), result);		
+	}
 	
 }

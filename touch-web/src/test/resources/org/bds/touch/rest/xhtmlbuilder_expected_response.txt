@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>response</title>
+  </head>
+  <body>
+    <ul>
+      <li class="id">1</li>
+      <li class="message">created</li>
+      <li>
+        <a class="uri" href="http://test/resource/1">uri</a>
+      </li>
+    </ul>
+  </body>
+</html>

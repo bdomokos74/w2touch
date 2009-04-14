@@ -96,6 +96,13 @@ public class XhtmlBuilder<T, S> {
 		Element ddElem = addNewElement(parentElement, "dd");
 		ddElem.setTextContent(value);
 	}
+	public void addPair(Element parentElement, String key, String value, String classname) {
+		Element dtElem = addNewElement(parentElement, "dt");
+		dtElem.setTextContent(key);
+		Element ddElem = addNewElement(parentElement, "dd");
+		ddElem.setAttribute("class", classname);
+		ddElem.setTextContent(value);
+	}
 
 	public void addPair(Element parentElement, String key, Element value) {
 		Element dtElem = addNewElement(parentElement, "dt");
@@ -164,6 +171,29 @@ public class XhtmlBuilder<T, S> {
 		eltError.appendChild(eltMessage);
 		body.appendChild(eltError);
 
+		return repr;
+	}
+	public DomRepresentation buildResponseXmlRep(String message, int id, String uri)
+	throws ResourceException {
+		
+		Element docElement = doc.getDocumentElement();
+		Element body = buildHeadAndBody(docElement, "response");
+		Element ulElement = addNewElement(body, "ul");
+
+		Element liElement = addNewElement(ulElement, "li");
+		liElement.setAttribute("class", "id");
+		liElement.setTextContent(String.valueOf(id));	
+
+		liElement = addNewElement(ulElement, "li");
+		liElement.setAttribute("class", "message");
+		liElement.setTextContent(message);
+		
+		liElement = addNewElement(ulElement, "li");
+		Element aElement = addNewElement(liElement, "a");
+		aElement.setTextContent("uri");
+		aElement.setAttribute("class", "uri");
+		aElement.setAttribute("href", uri);
+				
 		return repr;
 	}
 }

@@ -1,11 +1,15 @@
 package org.bds.touch.db;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
 import org.bds.touch.model.Chat;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcDaoSupport;
 
@@ -30,7 +34,7 @@ public class JdbcChatDAO extends SimpleJdbcDaoSupport implements ChatDAO {
 		
 		/*User user = getSimpleJdbcTemplate().queryForObject(JdbcUserDAO.SELECT_USER_BY_ID, JdbcUserDAO.mapper, ownerId);*/
 		
-		int updated = getSimpleJdbcTemplate().update(CREATE_CHAT, chatName,	ownerId, otherName);
+		int updated = getSimpleJdbcTemplate().update(CREATE_CHAT, chatName, ownerId, otherName);
 
 		if (updated < 1)
 			throw new RuntimeException("insert failed (Chat)");
