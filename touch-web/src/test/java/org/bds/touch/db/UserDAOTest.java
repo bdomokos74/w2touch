@@ -31,7 +31,7 @@ public class UserDAOTest {
 			if(!user.getName().equals("admin"))
 				userDao.deleteUserById(user.getId());
 		}
-		((JdbcUserDAO)userDao).getSimpleJdbcTemplate().update("alter table USER alter column id restart with 1");
+		((JdbcUserDAO)userDao).getSimpleJdbcTemplate().update("alter table TOUCHUSER alter column id restart with 1");
 	}
 
 	@Test

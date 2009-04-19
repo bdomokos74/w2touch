@@ -4,6 +4,12 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans 
        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
+	<bean id="propertyConfigurer"
+			class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+			<property name="location" value="db.properties" />
+			<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE" />
+	</bean>
+	
     <bean id="userDAO" class="org.bds.touch.db.JdbcUserDAO">
         <property name="dataSource" ref="dataSource"/>
     </bean>
@@ -17,9 +23,9 @@
     <!-- the DataSource (parameterized for configuration via a PropertyPlaceHolderConfigurer) -->
     <bean id="dataSource" destroy-method="close" class="org.apache.commons.dbcp.BasicDataSource">
         <property name="driverClassName" value="org.hsqldb.jdbcDriver"/>
-        <property name="url" value="jdbc:hsqldb:file://home/bds/.touchdb/prod;shutdown=true"/>
-        <property name="username" value="sa"/>
-        <property name="password" value=""/>
+        <property name="url" value="jdbc:hsqldb:file://${user.home}/.touchdb/prod;shutdown=true"/>
+        <property name="username" value="${db.username}"/>
+        <property name="password" value="${db.password}"/>
     </bean>
 
 </beans>

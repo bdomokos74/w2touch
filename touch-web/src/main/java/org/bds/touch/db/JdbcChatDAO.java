@@ -15,13 +15,13 @@ import org.springframework.jdbc.core.simple.SimpleJdbcDaoSupport;
 
 public class JdbcChatDAO extends SimpleJdbcDaoSupport implements ChatDAO {
 
-	private static final String FIND_ALL_CHAT = "select id, last_modified, chat_name, owner_id, party_name from chat";
-	private static final String FIND_CHAT_BY_NAME = "select id, last_modified, chat_name, owner_id, party_name from chat, user where owner_id = user.id and user.name= ? and chat_name = ?";
-	private static final String FIND_CHAT_BY_ID = "select id, last_modified, chat_name, owner_id, party_name from chat where id = ?";
-	private static final String FINDALL_CHAT_BY_USERID = "select id, last_modified, chat_name, owner_id, party_name from chat where owner_id = ?";
-	private static final String FINDALL_CHAT_BY_USERNAME = "select id, last_modified, chat_name, owner_id, party_name from chat, user where owner_id = user.id and user.name = ?";
-	private static final String DELETE_CHAT_BY_ID = "delete from chat where id = ?";
-	static final String CREATE_CHAT = "insert into chat (chat_name, owner_id, party_name) values (?, ?, ?)";
+	private static final String FIND_ALL_CHAT = "select id, last_modified, chat_name, owner_id, party_name from CHAT";
+	private static final String FIND_CHAT_BY_NAME = "select id, last_modified, chat_name, owner_id, party_name from CHAT, TOUCHUSER where owner_id = TOUCHUSER.id and TOUCHUSER.name= ? and chat_name = ?";
+	private static final String FIND_CHAT_BY_ID = "select id, last_modified, chat_name, owner_id, party_name from CHAT where id = ?";
+	private static final String FINDALL_CHAT_BY_USERID = "select id, last_modified, chat_name, owner_id, party_name from CHAT where owner_id = ?";
+	private static final String FINDALL_CHAT_BY_USERNAME = "select id, last_modified, chat_name, owner_id, party_name from CHAT, TOUCHUSER where owner_id = TOUCHUSER.id and TOUCHUSER.name = ?";
+	private static final String DELETE_CHAT_BY_ID = "delete from CHAT where id = ?";
+	static final String CREATE_CHAT = "insert into CHAT (chat_name, owner_id, party_name) values (?, ?, ?)";
 
 	static ParameterizedRowMapper<Chat> mapper = new  ParameterizedRowMapper<Chat>() {
 		public Chat mapRow(ResultSet rs, int rowNum) throws SQLException {

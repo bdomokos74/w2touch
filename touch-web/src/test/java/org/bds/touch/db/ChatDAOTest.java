@@ -48,7 +48,7 @@ public class ChatDAOTest {
 				userDao.deleteUserById(u.getId());
 		}
 		// Reset the autoincremented index on the user table
-		((JdbcChatDAO)chatDao).getSimpleJdbcTemplate().update("alter table USER alter column id restart with 1");
+		((JdbcChatDAO)chatDao).getSimpleJdbcTemplate().update("alter table TOUCHUSER alter column id restart with 1");
 	}
 
 	@Before

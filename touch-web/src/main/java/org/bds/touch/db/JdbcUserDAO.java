@@ -10,10 +10,11 @@ import org.springframework.jdbc.core.simple.SimpleJdbcDaoSupport;
 
 public class JdbcUserDAO extends SimpleJdbcDaoSupport implements UserDAO {
 
-	static final String SELECT_USERS = "select id, name, pw from USER";
-	static final String SELECT_USER_BY_NAME = "select id, name, pw from USER where name = ?";
-	static final String SELECT_USER_BY_ID = "select id, name, pw from USER where id = ?";
-	static final String CREATE_USER = "insert into USER (name, pw) values (?, ?)";
+	static final String DELETE_USER = "delete from TOUCHUSER where id = ?";
+	static final String SELECT_USERS = "select id, name, pw from TOUCHUSER";
+	static final String SELECT_USER_BY_NAME = "select id, name, pw from TOUCHUSER where name = ?";
+	static final String SELECT_USER_BY_ID = "select id, name, pw from TOUCHUSER where id = ?";
+	static final String CREATE_USER = "insert into TOUCHUSER (name, pw) values (?, ?)";
 
 	static ParameterizedRowMapper<User> mapper = new  ParameterizedRowMapper<User>() {
 		public User mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -56,7 +57,7 @@ public class JdbcUserDAO extends SimpleJdbcDaoSupport implements UserDAO {
 	}
 
 	public void deleteUserById(int id) {
-		int updated = getSimpleJdbcTemplate().update("delete from user where id = ?", id);
+		int updated = getSimpleJdbcTemplate().update(DELETE_USER, id);
 		if(updated <=0)
 			throw new RuntimeException("can't delete user, id="+id);
 		

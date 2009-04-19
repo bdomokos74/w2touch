@@ -47,6 +47,8 @@ public class ChatListResourceTest {
 		assertEquals("new_chat_1", chat.getChatName());
 
 		String result = chatListResource.getResponse().getEntity().getText();
+		int index = result.indexOf("<html");
+		result = result.substring(index);
 		assertEquals(testHelper.getExpectedString("/org/bds/touch/rest/chatlistresource_resp_expected_1.txt"), result);
 	}
 }
